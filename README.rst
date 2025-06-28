@@ -5,7 +5,7 @@ Trim : Python code for triadic interactions
 .. image:: logo.png
    :width: 200
 
-This repository contains the Python package called trim (former triaction), which enables the detection of triadic interactions. It also provides visualisation capabilities to visualise triadic interaction network.
+This repository contains the Python package called trim (former triaction: https://github.com/anthbapt/triaction), which enables the detection of triadic interactions. It also provides visualisation capabilities to visualise triadic interaction network.
 
 The package has been created by Anthony Baptista, Marta Niedostatek and Ginestra Bianconi, with the help of Jun Yamamoto.
 

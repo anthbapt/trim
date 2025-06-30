@@ -34,14 +34,14 @@ Data
 Gene expression of Acute Myeloid Leukemia (AML)
 ---------------------------------------------------
 
-Scatter plot of the results of the Triaction algorithm on AML gene expression data. Each data point shows the information-theoretic measures for a triple of nodes $X$, $Y$ and $Z$, namely MI and CMI, the mutual information and conditional mutual information between $X$ and $Y$, respectively. The colour of each point corresponds to the value of :math:`\Sigma` , which characterises the strength of the triadic interaction between gene $Z$ and the edge between $X$ and $Y$.
+Scatter plot of the results of the Trim algorithm on AML gene expression data. Each data point shows the information-theoretic measures for a triple of nodes $X$, $Y$ and $Z$, namely MI and CMI, the mutual information and conditional mutual information between $X$ and $Y$, respectively. The colour of each point corresponds to the value of :math:`\Sigma` , which characterises the strength of the triadic interaction between gene $Z$ and the edge between $X$ and $Y$.
 
 .. image:: output/MI_merge.png
    :width: 600
 
 .. code-block:: Python  
 
-   from triaction.analysis import decision_tree_val, visualisation_conditioned_val
+   from trim.analysis import decision_tree_val, visualisation_conditioned_val
 
    gene_expression = pd.read_csv('data/reduce_gene_expression.tsv', sep = '\t', index_col=0)
    name_X = 'GATA1'
@@ -65,7 +65,7 @@ Scatter plot of the results of the Triaction algorithm on AML gene expression da
 
 .. code-block:: Python  
 
-   from triaction.triadic_vis import triadic_network_vis_from_data_and_graph
+   from trim.triadic_vis import triadic_network_vis_from_data_and_graph
 
    ppi = pd.read_csv('data/reduce_ppi.tsv', sep = '\t')
    graph_ppi = nx.from_pandas_edgelist(ppi, source = '0', target = '1')

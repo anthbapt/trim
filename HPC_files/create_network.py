@@ -1,24 +1,9 @@
-import os
-import sys
-
-import pandas as pd
-import scipy as sp
-from scipy import stats
 import numpy as np
 import random
-import matplotlib.pyplot as plt
-import matplotlib.colors
-from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
 sns.set_style("whitegrid", {'axes.grid' : False})
-from scipy.sparse.linalg import eigsh
-from sympy import *
-from numpy.linalg import inv
-from model import *
-from computation import *
-
-from sklearn import tree
-from itertools import groupby
+from model import NDwTIs
+from computation import create_node_edge_incidence_matrix
 import networkx as nx
 
 
@@ -38,7 +23,6 @@ Elist = Elist + 1
 # save the network
 nx.write_gml(G,"network_100_i")
 # create the incidence matrix K for the regulatory graph
-
 
 n_nodes = N
 edge_list = Elist
@@ -165,9 +149,3 @@ np.save("timeseries_100_i-6",timeseries6)
 timeseries = np.concatenate((timeseries1, timeseries2,timeseries3,timeseries4,timeseries5,timeseries6),axis=1)
 timeseries = timeseries[:,::5]
 np.save("timeseries_100_i",timeseries)
-
-
-
-
-
-

@@ -1,26 +1,10 @@
 import os
-import sys
 import scipy as sp
-from scipy import stats
 import numpy as np
-import random
-import matplotlib.pyplot as plt
-import matplotlib.colors
-from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
 sns.set_style("whitegrid", {'axes.grid' : False})
-from scipy.sparse.linalg import eigsh
-from sympy import *
-from numpy.linalg import inv
-from sklearn.metrics import mutual_info_score
-from sklearn.feature_selection import mutual_info_classif, mutual_info_regression
-from model import *
-from computation import *
-import infocoreD as ifc
-
-from sklearn.metrics import mean_squared_error
-from sklearn import tree
-from itertools import groupby
+from sklearn.feature_selection import mutual_info_regression
+from computation import create_node_edge_incidence_matrix
 import networkx as nx
 
 
@@ -66,7 +50,6 @@ def mutual_information_analysis_continuous(timeseries,I,num,tlen):
     MI = mutual_info_regression(Xa, Y, discrete_features=False)
     MI = MI[0]
     idx = Z.argsort();
-    Z_sort = Z[idx];
     X_sort = X[idx];
     Y_sort = Y[idx];
     Xn = np.zeros((dtlen,2))
@@ -83,6 +66,7 @@ def mutual_information_analysis_continuous(timeseries,I,num,tlen):
 
     return MI, MIz,MIC,Sigma, T,Tn
 
+
 # tlen length of the times series to be analysed (multiple of num) should be smaller or equal
 # than the length of the timeseries from data
 # num number of bins
@@ -95,7 +79,6 @@ def correlation_analysis_continuous(timeseries,I,num,tlen):
     Y = np.asarray(timeseries[I[1],:])
     Z = np.asarray(timeseries[I[2],:])
     idx = Z.argsort();
-    Z_sort = Z[idx];
     X_sort = X[idx];
     Y_sort = Y[idx];
     Cz = np.zeros((num))
@@ -160,6 +143,7 @@ def null_model_results(M, Cov, timeseries,I, num, Sigma, T, Tn, nrunmax, Gaussia
     P_Tn = P_Tn if P_Tn>0 else 1/nrunmax
     return  X_null, Xz_null, Theta, Theta_T, Theta_Tn, Sigma,Sigma_null_list, P,P_T,P_Tn
 
+
 # main function that given a timeseries between N variables, selects the three time series in the triple of nodes
 # I (in the original labelling of the edge list) and calculates the MI, the
 # the conditional mutual information MIC, Sigma and Theta (with a null model taking nrunmax iterations)
@@ -168,7 +152,6 @@ def null_model_results(M, Cov, timeseries,I, num, Sigma, T, Tn, nrunmax, Gaussia
 # num number of bins
 # version 1: gaussian model from covariance and mean of the three timeseries
 # version 2: reshuffling of the Z timeseries
-
 def Theta_score_null_model(timeseries, I, num, tlen, nrunmax, Gaussian_version=True, Mutual_version=True):
     I = np.array(I)-1
     timeseries = timeseries[:, -tlen:]
@@ -184,6 +167,7 @@ def Theta_score_null_model(timeseries, I, num, tlen, nrunmax, Gaussian_version=T
                                         timeseries, I, num, Sigma, T, Tn, nrunmax, Gaussian_version, Mutual_version)
 
     return X, Xz, Xz_null, MIC, Theta, Theta_T, Theta_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn
+
 
 ts_list = []
 P_list1 = []

@@ -1,5 +1,3 @@
-from sklearn.metrics import mean_squared_error
-from trim.seaborn_grid import SeabornFig2Grid
 from matplotlib.ticker import MaxNLocator
 import matplotlib.gridspec as gridspec
 from scipy.optimize import curve_fit
@@ -41,7 +39,6 @@ def func(x: np.ndarray, a: float, b: float):
     
     y = a * x + b
     return y
-
 
 
 def fit(x: np.ndarray, y: np.ndarray):
@@ -273,11 +270,6 @@ def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond =
     fig.suptitle('Conditional distribution', fontsize=18)
     gs = gridspec.GridSpec(1, 3)
 
-    mg0 = SeabornFig2Grid(g0, fig, gs[0])
-    mg1 = SeabornFig2Grid(g1, fig, gs[1])
-    if type(cond) is list:
-        mg2 = SeabornFig2Grid(g2, fig, gs[2])
-
     gs.tight_layout(fig)
     
     if name != None:
@@ -389,12 +381,7 @@ def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tle
     fig = plt.figure(figsize=(12,6))
     fig.suptitle('Conditional distribution', fontsize=18)
     gs = gridspec.GridSpec(1, 3)
-
-    mg0 = SeabornFig2Grid(g0, fig, gs[0])
-    mg1 = SeabornFig2Grid(g1, fig, gs[1])
-    if type(cond) is list:
-        mg2 = SeabornFig2Grid(g2, fig, gs[2])
-
+    
     gs.tight_layout(fig)
     
     if name != None:
@@ -468,9 +455,6 @@ def decision_tree(x_1d: np.ndarray, y_1d: np.ndarray, disp_fig: bool = False, di
         plt.ylabel("MI(XY|Z = z)", fontsize = 12)
         if name is not None:
             plt.savefig(name + '_tree1',bbox_inches="tight", dpi = 600)
-    
-    if disp_txt_rep == True:
-        text_representation = tree.export_text(regr)
     
     if disp_tree == True or name is not None:
         fig = plt.figure(figsize = (8,4), dpi = 600)
@@ -559,9 +543,6 @@ def decision_tree_val(x_1d: np.ndarray, y_1d: np.ndarray, z: np.ndarray, disp_fi
         plt.xticks(ticks=x_1d, labels=z_val)
         if name is not None:
             plt.savefig(name + '_tree1',bbox_inches="tight", dpi = 600)
-    
-    if disp_txt_rep == True:
-        text_representation = tree.export_text(regr)
     
     if disp_tree == True or name is not None:
         fig = plt.figure(figsize = (8,4), dpi = 600)

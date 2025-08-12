@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from matplotlib import pylab
 import networkx as nx
 import pandas as pd
 import numpy as np
@@ -127,11 +126,8 @@ def triadic_network_vis_from_data(triadic:pd.DataFrame, top:int):
     
     plt.figure(num = None, figsize = (top, top), dpi = 600)
     plt.axis('off')
-    fig = plt.figure(1)
-    cut = 1.00
     
     triadic = triadic.iloc[0:top]
-    triadic_nodes = (set(list(triadic[0])).union(set(list(triadic[1])))).union(set(list(triadic[2])))
     pos_regulatory_nodes = list()
     pos_regulatory_edges = list()
     neg_regulatory_nodes = list()
@@ -229,8 +225,6 @@ def triadic_network_vis_from_data_and_graph(graph:nx.Graph, triadic:pd.DataFrame
 
     plt.figure(num = None, figsize = (10, 10), dpi = 600)
     plt.axis('off')
-    fig = plt.figure(1)
-    cut = 1.00
     
     triadic = triadic.iloc[0:top]
     triadic_nodes = (set(list(triadic['reg'])).union(set(list(triadic['node1'])))).union(set(list(triadic['node2'])))

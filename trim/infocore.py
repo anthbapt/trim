@@ -1,8 +1,8 @@
 from sklearn.feature_selection import mutual_info_regression
-import sklearn.preprocessing
+from pyitlib import discrete_random_variable as drv
 import scipy as sp
 import numpy as np
-import math
+
 
 def timeseries_quantile(timeseries: np.ndarray, I: list, num: int, tlen: int):
     """
@@ -34,12 +34,10 @@ def timeseries_quantile(timeseries: np.ndarray, I: list, num: int, tlen: int):
     """
 
     timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/num))
     X = np.asarray(timeseries[I[0],:])
     Y = np.asarray(timeseries[I[1],:])
     Z = np.asarray(timeseries[I[2],:])
     idx = Z.argsort()
-    Z_sort = Z[idx]
     X_sort = X[idx]
     Y_sort = Y[idx]
     sp = np.array_split(Z, num)
@@ -83,7 +81,6 @@ def timeseries_quantile_val(timeseries: np.ndarray, I: list, num: int, tlen: int
     """
 
     timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/num))
     X = np.asarray(timeseries[I[0],:])
     Y = np.asarray(timeseries[I[1],:])
     Z = np.asarray(timeseries[I[2],:])
@@ -146,7 +143,6 @@ def mutual_information_analysis_continuous(timeseries: np.ndarray, I: list, num:
     MI = mutual_info_regression(Xa, Y, discrete_features = False)
     MI = MI[0]
     idx = Z.argsort()
-    Z_sort = Z[idx]
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
@@ -286,7 +282,6 @@ def mindy_final(timeseries: np.ndarray, I: list, tlen: int):
     Y = np.asarray(timeseries[I[1],:])
     Z = np.asarray(timeseries[I[2],:])
     idx = Z.argsort()
-    Z_sort = Z[idx]
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
@@ -345,7 +340,6 @@ def mindy(timeseries:np.ndarray, I:list, tlen:int):
     Y = np.asarray(timeseries[I[1],:])
     Z = np.asarray(timeseries[I[2],:])
     idx = Z.argsort()
-    Z_sort = Z[idx]
     X_sort = X[idx]
     Y_sort = Y[idx]
     MINDYz = np.zeros((3))
@@ -405,7 +399,6 @@ def mutual_information(timeseries: np.ndarray, I: list, num: int, tlen: int):
     MI = mutual_info_regression(Xa, Y, discrete_features = False)
     MI = MI[0]
     idx = Z.argsort()
-    Z_sort = Z[idx]
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
@@ -466,7 +459,6 @@ def sigma(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = Tru
     Y = np.asarray(timeseries[I[1],:])
     Z = np.asarray(timeseries[I[2],:])
     idx = Z.argsort()
-    Z_sort = Z[idx]
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
@@ -535,7 +527,6 @@ def t(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, n
     Y = np.asarray(timeseries[I[1],:])
     Z = np.asarray(timeseries[I[2],:])
     idx = Z.argsort()
-    Z_sort = Z[idx]
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
@@ -605,7 +596,6 @@ def tn(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, 
     Y = np.asarray(timeseries[I[1],:])
     Z = np.asarray(timeseries[I[2],:])
     idx = Z.argsort()
-    Z_sort = Z[idx]
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
@@ -668,7 +658,6 @@ def correlation_analysis_continuous(timeseries: np.ndarray, I: list, num: int, t
     Y = np.asarray(timeseries[I[1],:])
     Z = np.asarray(timeseries[I[2],:])
     idx = Z.argsort()
-    Z_sort = Z[idx]
     X_sort = X[idx]
     Y_sort = Y[idx]
     Cz = np.zeros((num))
@@ -905,7 +894,6 @@ def null_model(timeseries: np.ndarray, I: list, num: int, tlen: int, nrunmax: in
     timeseries = timeseries[:, -tlen:]
     Cov = np.cov(timeseries)
     M = np.mean(timeseries, axis = 1)
-    MIC = -1
     I2 = I
     if (Gaussian_version==True):
         MT = M[I]
@@ -1109,75 +1097,3 @@ def freedman_diaconis(data: np.ndarray, returnas: str = "bins"):
         result = bw
         
     return(result)
-
-
-def mch_approximation(samples: np.ndarray, dlamda: np.ndarray):
-    """
-    Make a Monte Carlo Histogram (MCH) approximation step for the Ising model.
-
-    This function performs an approximation step based on the Monte Carlo Histogram (MCH) method 
-    for the Ising model. The MCH method computes predicted values for the mean observables of the 
-    Ising model by considering changes in the parameters and their impact on the energy.
-
-    Args:
-        samples (np.ndarray): 
-            An array of Ising model samples, where each row corresponds to a sample, and each column represents a spin in the system.
-        dlamda (np.ndarray): 
-            An array of changes in the parameters (e.g., magnetic field, interaction strengths) of the Ising model.
-    
-    Returns:
-        predsisj (np.ndarray): 
-            Predicted values for the mean Ising model observables. The values are constrained to lie within the range [-1, 1].
-
-    Raises:
-        AssertionError: 
-            If the predicted values (`predsisj`) are found to be outside the valid range of [-1, 1].
-
-    Notes:
-        - The function uses the `calc_observables` function to compute the observables from the samples.
-        - The `dlamda` array represents changes in model parameters, which affect the energy of the system.
-        - The predicted values are normalized with a partition function (`ZFraction`), calculated using the `logsumexp` function for numerical stability.
-        - The predicted values are checked to ensure they remain within the valid physical range of [-1, 1].
-    """
-
-    dE = calc_observables(samples).dot(dlamda)
-    ZFraction = len(dE) / np.exp(logsumexp(-dE))
-    predsisj = ( calc_observables( samples )*np.exp(-dE)[:,None] ).mean(0) * ZFraction  
-    assert not (np.any(predsisj<-1.00000001) or
-        np.any(predsisj>1.000000001)),"Predicted values are beyond limits, (%1.6f,%1.6f)"%(predsisj.min(), predsisj.max())
-    
-    return predsisj
-    
-    
-def learn_settings(i: int):
-    """
-    Determine settings based on the iteration counter.
-
-    This function calculates the settings for the learning process at a given iteration, where the 
-    settings are determined by an exponential decay based on the iteration index `i`. The values 
-    are used for controlling the maximum allowed change in parameters (`maxdlamda`) and a 
-    multiplicative factor (`eta`) that adjusts the parameter updates.
-
-    Args:
-        i (int): 
-            The iteration counter. As the counter increases, the settings (`maxdlamda` and `eta`) 
-            are updated using an exponential decay formula.
-
-    Returns:
-        dict: 
-            A dictionary containing two key-value pairs:
-            - 'maxdlamda' (float): The maximum allowed change in any given parameter, computed 
-              using an exponential decay based on the iteration.
-            - 'eta' (float): The multiplicative factor, computed similarly, that adjusts the 
-              changes in the parameters based on the observed error.
-
-    Notes:
-        - Both `maxdlamda` and `eta` are computed using the formula `math.exp(-i/5.) * 0.5`, 
-          where `i` is the current iteration index.
-        - The values of `maxdlamda` and `eta` decrease exponentially with the number of iterations, 
-          implying a gradual reduction in the rate of learning.
-    """
-
-    out = {'maxdlamda':math.exp(-i/5.)*.5,'eta':math.exp(-i/5.)*.5}
-
-    return outs

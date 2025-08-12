@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
+
 class SeabornFig2Grid:
     """A class for arranging Seaborn plots within a grid.
 

@@ -4,6 +4,7 @@ from scipy.stats import iqr
 import scipy.stats as sps
 from scipy.special import kl_div
 
+
 def create_node_edge_incidence_matrix(edge_list:list):
     """Create a node-edge incidence matrix B from a given edge list.
 
@@ -32,6 +33,7 @@ def create_node_edge_incidence_matrix(edge_list:list):
     B = csc_matrix((np.array(b_ij), (np.array(row_i), np.array(col_j))), dtype=np.int8)
 
     return B.toarray()
+
 
 def extract_by_std(data:np.ndarray, n_std:float=3.):
     """Extract the data within a given number of standard deviations from its mean.
@@ -70,6 +72,7 @@ def extract_by_std(data:np.ndarray, n_std:float=3.):
 
     # Compute the core range
     return data_min, data_max
+
 
 def freedman_diaconis_rule(data:np.ndarray, power:float=1./3., factor:float=2.):
     """Compute the number of bins using the Freedman-Diaconis rule.
@@ -131,6 +134,7 @@ def freedman_diaconis_rule(data:np.ndarray, power:float=1./3., factor:float=2.):
     
     return bin_edges
 
+
 def _check_data_shape(data:np.ndarray):
     """Check the shape of the data.
     
@@ -151,6 +155,7 @@ def _check_data_shape(data:np.ndarray):
         raise ValueError(
             'The data must be of shape (n_observations,) or (1, n_observations).'
         )
+
 
 def _generate_bins(data:np.ndarray, bins:str or np.ndarray or int or list or tuple):
     """Generate the bins.
@@ -264,6 +269,7 @@ def _generate_bins(data:np.ndarray, bins:str or np.ndarray or int or list or tup
     
     return bin_edges, n_bins
 
+
 def estimate_pdf(data:np.ndarray, bins:str or int or np.ndarray='fd', method:str='kde'):
     """Estimate the probability density function of the data.
 
@@ -324,6 +330,7 @@ def estimate_pdf(data:np.ndarray, bins:str or int or np.ndarray='fd', method:str
         )
     
     return pdf, x
+
 
 def estimate_pdf_joint(data:np.ndarray, bins:str or np.ndarray or int or list or tuple='fd', method:str='kde'):
     """Estimate the joint probability density function of the data by the histogram method.
@@ -404,6 +411,7 @@ def estimate_pdf_joint(data:np.ndarray, bins:str or np.ndarray or int or list or
     
     return pdf_joint, x
 
+
 def estimate_pmf(data:np.ndarray, bins:str or int or np.ndarray='fd', method:str='kde'):
     """Estimate the probability mass function of the data by the histogram method.
 
@@ -450,6 +458,7 @@ def estimate_pmf(data:np.ndarray, bins:str or int or np.ndarray='fd', method:str
     
     return pmf, x
 
+
 def estimate_pmf_joint(data:np.ndarray, bins:str or np.ndarray or int or list or tuple='fd', method:str='kde'):
     """Estimate the joint probability mass function of the data.
 
@@ -481,13 +490,6 @@ def estimate_pmf_joint(data:np.ndarray, bins:str or np.ndarray or int or list or
     # Check the shape of the data
     _check_data_shape(data)
 
-    # Get the number of variables
-    if data.ndim == 1:
-        n_variables = 1
-    else:
-        data = np.atleast_2d(data)
-        n_variables = data.shape[0]
-
     # Generate the bins
     bin_edges, _ = _generate_bins(data, bins)
     
@@ -495,6 +497,7 @@ def estimate_pmf_joint(data:np.ndarray, bins:str or np.ndarray or int or list or
     pmf_joint = pdf_joint / np.sum(pdf_joint)
     
     return pmf_joint, x
+
 
 def estimate_mutual_information(X:np.ndarray, Y:np.ndarray, bins:str or int='fd', pmf_method:str='kde', method:str='kl-div'):
     """Calculate the mutual information between X and Y.
@@ -577,6 +580,7 @@ def estimate_mutual_information(X:np.ndarray, Y:np.ndarray, bins:str or int='fd'
 
     return mi
 
+
 def covariance(data:np.ndarray):
     """Calculate the covariance matrix.
 
@@ -610,6 +614,7 @@ def covariance(data:np.ndarray):
         cov_np[i] = cov_i.flatten()
     
     return cov_np
+
 
 def conditional_correlation(X:np.ndarray, Y:np.ndarray, Z:np.ndarray, bins:str or int='fd'):
     """Compute the conditional variance.
@@ -680,6 +685,7 @@ def conditional_correlation(X:np.ndarray, Y:np.ndarray, Z:np.ndarray, bins:str o
         )
     
     return cond_corr, z, cond_corr_stderr
+
 
 def conditional_mutual_information(X:np.ndarray, Y:np.ndarray, Z:np.ndarray, bins:str or int='fd', pmf_method:str='kde', method:str='kl-div'):
     """Calculate the conditional mutual information between X and Y given Z.

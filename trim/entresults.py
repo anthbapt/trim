@@ -1,15 +1,13 @@
 import re
-import pandas
 import matplotlib.pyplot as plt
 import re
 import pandas as pd
 import numpy as np
 import networkx as nx
-import triaction.infocore_modified as ifc
-from triaction.analysis_modified import decision_tree
-import matplotlib.colors as colors
+import trim.infocore as ifc
+from trim.analysis import decision_tree
 import matplotlib as mpl
-from matplotlib.colors import LinearSegmentedColormap, ListedColormap
+from matplotlib.colors import ListedColormap
 
 def edge(s):
     """

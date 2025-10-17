@@ -1,5 +1,9 @@
-__version__ = "0.1"
+__version__ = "0.2"
 
-from triaction.analysis import *
-from triaction.triadic_vis import *
-from triaction.infocore import *
+from trim.analysis import *
+from trim.triadic_vis import *
+from trim.infocore import *
+from trim.computation import *
+from trim.entropy import *
+from trim.entresults import *
+from trim.model import *

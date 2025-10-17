@@ -5,3 +5,6 @@ pandas
 networkx
 seaborn
 scikit-learn
+pyitlib
+sdeint
+pydot

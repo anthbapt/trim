@@ -3,6 +3,7 @@ from scipy.sparse import csc_matrix
 from scipy.stats import iqr
 import scipy.stats as sps
 from scipy.special import kl_div
+from typing import Union
 
 
 def create_node_edge_incidence_matrix(edge_list:list):
@@ -156,8 +157,7 @@ def _check_data_shape(data:np.ndarray):
             'The data must be of shape (n_observations,) or (1, n_observations).'
         )
 
-
-def _generate_bins(data:np.ndarray, bins:str or np.ndarray or int or list or tuple):
+def _generate_bins(data:np.ndarray, bins:Union[str, np.ndarray, int, list, tuple]):
     """Generate the bins.
 
     Parameters
@@ -269,8 +269,7 @@ def _generate_bins(data:np.ndarray, bins:str or np.ndarray or int or list or tup
     
     return bin_edges, n_bins
 
-
-def estimate_pdf(data:np.ndarray, bins:str or int or np.ndarray='fd', method:str='kde'):
+def estimate_pdf(data:np.ndarray, bins:Union[str, int, np.ndarray]='fd', method:str='kde'):
     """Estimate the probability density function of the data.
 
     Parameters
@@ -331,8 +330,7 @@ def estimate_pdf(data:np.ndarray, bins:str or int or np.ndarray='fd', method:str
     
     return pdf, x
 
-
-def estimate_pdf_joint(data:np.ndarray, bins:str or np.ndarray or int or list or tuple='fd', method:str='kde'):
+def estimate_pdf_joint(data:np.ndarray, bins:Union[str, np.ndarray, int, list, tuple]='fd', method:str='kde'):
     """Estimate the joint probability density function of the data by the histogram method.
 
     Parameters
@@ -411,8 +409,7 @@ def estimate_pdf_joint(data:np.ndarray, bins:str or np.ndarray or int or list or
     
     return pdf_joint, x
 
-
-def estimate_pmf(data:np.ndarray, bins:str or int or np.ndarray='fd', method:str='kde'):
+def estimate_pmf(data:np.ndarray, bins:Union[str, int, np.ndarray]='fd', method:str='kde'):
     """Estimate the probability mass function of the data by the histogram method.
 
     Parameters
@@ -458,8 +455,7 @@ def estimate_pmf(data:np.ndarray, bins:str or int or np.ndarray='fd', method:str
     
     return pmf, x
 
-
-def estimate_pmf_joint(data:np.ndarray, bins:str or np.ndarray or int or list or tuple='fd', method:str='kde'):
+def estimate_pmf_joint(data:np.ndarray, bins:Union[str, np.ndarray, int, list, tuple]='fd', method:str='kde'):
     """Estimate the joint probability mass function of the data.
 
     Parameters
@@ -498,8 +494,7 @@ def estimate_pmf_joint(data:np.ndarray, bins:str or np.ndarray or int or list or
     
     return pmf_joint, x
 
-
-def estimate_mutual_information(X:np.ndarray, Y:np.ndarray, bins:str or int='fd', pmf_method:str='kde', method:str='kl-div'):
+def estimate_mutual_information(X:np.ndarray, Y:np.ndarray, bins:Union[str, int]='fd', pmf_method:str='kde', method:str='kl-div'):
     """Calculate the mutual information between X and Y.
 
     Parameters
@@ -615,8 +610,7 @@ def covariance(data:np.ndarray):
     
     return cov_np
 
-
-def conditional_correlation(X:np.ndarray, Y:np.ndarray, Z:np.ndarray, bins:str or int='fd'):
+def conditional_correlation(X:np.ndarray, Y:np.ndarray, Z:np.ndarray, bins:Union[str, int]='fd'):
     """Compute the conditional variance.
     
     Parameters
@@ -686,8 +680,7 @@ def conditional_correlation(X:np.ndarray, Y:np.ndarray, Z:np.ndarray, bins:str o
     
     return cond_corr, z, cond_corr_stderr
 
-
-def conditional_mutual_information(X:np.ndarray, Y:np.ndarray, Z:np.ndarray, bins:str or int='fd', pmf_method:str='kde', method:str='kl-div'):
+def conditional_mutual_information(X:np.ndarray, Y:np.ndarray, Z:np.ndarray, bins:Union[str, int]='fd', pmf_method:str='kde', method:str='kl-div'):
     """Calculate the conditional mutual information between X and Y given Z.
 
     Parameters

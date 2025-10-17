@@ -94,9 +94,9 @@ def triadic_network_vis_from_scratch(structural_nodes:list, structural_edges:lis
     node_labels = {i:str(i) for i in structural_nodes}
     pos_labels = {i:pos[i] for i in structural_nodes}
     nx.draw_networkx_labels(structural_graph, pos_labels, node_labels, font_size = 8, font_color = "black", verticalalignment = 'center')
-    plt.savefig(save_folder + '/test_vis_from_scratch.png', format = 'png', dpi = 600)
-    
-    
+    plt.savefig(os.path.join(save_folder, 'test_vis_from_scratch.png'), format = 'png', dpi = 600)
+
+
 def triadic_network_vis_from_data(triadic:pd.DataFrame, top:int):
     """
     Visualize a triadic network from given data.
@@ -191,7 +191,7 @@ def triadic_network_vis_from_data(triadic:pd.DataFrame, top:int):
     node_labels = {i:str(i) for i in regulatory_nodes}
     pos_labels = {i:pos[i] for i in regulatory_nodes}
     nx.draw_networkx_labels(graph, pos_labels, node_labels, font_size = 2, font_color = "black")
-    plt.savefig(save_folder + '/triadic_vis_from_data.png', format = 'png', dpi = 600)
+    plt.savefig(os.path.join(save_folder, 'triadic_vis_from_data.png'), format = 'png', dpi = 600)
     
     
 def triadic_network_vis_from_data_and_graph(graph:nx.Graph, triadic:pd.DataFrame, top:int):
@@ -308,4 +308,4 @@ def triadic_network_vis_from_data_and_graph(graph:nx.Graph, triadic:pd.DataFrame
     node_labels = {i:str(i) for i in structural_nodes}
     pos_labels = {i:pos[i] for i in structural_nodes}
     nx.draw_networkx_labels(structural_graph, pos_labels, node_labels, font_size = 8, font_color = "black", verticalalignment = 'bottom')
-    plt.savefig(save_folder + '/triadic_vis_from_data.png', format = 'png', dpi = 600)
+    plt.savefig(os.path.join(save_folder, 'triadic_vis_from_data.png'), format = 'png', dpi = 600)

@@ -1,4 +1,6 @@
 import numpy as np
+import trim.infocore as ifc
+from trim.analysis import decision_tree
 
 def entropy(timeseries: np.ndarray, I: list):
     """

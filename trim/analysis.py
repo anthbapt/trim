@@ -6,6 +6,7 @@ from itertools import groupby
 from sklearn import tree
 import trim.infocore as ifc
 import seaborn as sns
+from trim.seaborn_grid import SeabornFig2Grid
 import scipy as sp
 import numpy as np
 import os
@@ -270,6 +271,14 @@ def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond =
     fig.suptitle('Conditional distribution', fontsize=18)
     gs = gridspec.GridSpec(1, 3)
 
+    if type(cond) is int or cond == None:
+        mg0 = SeabornFig2Grid(g0, fig, gs[0])
+        mg1 = SeabornFig2Grid(g1, fig, gs[1])
+    if type(cond) is list:
+        mg0 = SeabornFig2Grid(g0, fig, gs[0])
+        mg1 = SeabornFig2Grid(g1, fig, gs[1])
+        mg2 = SeabornFig2Grid(g2, fig, gs[2])
+
     gs.tight_layout(fig)
     
     if name != None:
@@ -380,8 +389,18 @@ def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tle
     
     fig = plt.figure(figsize=(12,6))
     fig.suptitle('Conditional distribution', fontsize=18)
-    gs = gridspec.GridSpec(1, 3)
     
+    if type(cond) is int or cond == None:
+        gs = gridspec.GridSpec(1, 2)
+        mg0 = SeabornFig2Grid(g0, fig, gs[0])
+        mg1 = SeabornFig2Grid(g1, fig, gs[1])
+    
+    elif type(cond) is list:
+        gs = gridspec.GridSpec(1, 3)
+        mg0 = SeabornFig2Grid(g0, fig, gs[0])
+        mg1 = SeabornFig2Grid(g1, fig, gs[1])
+        mg2 = SeabornFig2Grid(g2, fig, gs[2])
+
     gs.tight_layout(fig)
     
     if name != None:

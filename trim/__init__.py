@@ -7,3 +7,4 @@ from trim.computation import *
 from trim.entropy import *
 from trim.entresults import *
 from trim.model import *
+from trim.seaborn_grid import *

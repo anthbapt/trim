@@ -43,12 +43,20 @@ Scatter plot of the results of the Trim algorithm on AML gene expression data. E
 
 .. code-block:: Python  
 
-   from trim.analysis import decision_tree_val, visualisation_conditioned_val
+   import numpy as np
+   import pandas as pd
+   from trim.analysis import decision_tree, visualisation_conditioned_val
+   from trim.infocore import Theta_score_null_model
 
-   gene_expression = pd.read_csv('data/reduce_gene_expression.tsv', sep = '\t', index_col=0)
+   # Load gene expression data
+   gene_expression = pd.read_csv('../data/reduce_gene_expression.tsv', sep = '\t', index_col=0)
+
+   # Select genes of interest
    name_X = 'GATA1'
    name_Y = 'TAL1'
    name_Z = 'KLF5'
+
+   # Prepare time series data
    X = np.array(gene_expression.T[name_X])
    Y = np.array(gene_expression.T[name_Y])
    Z = np.array(gene_expression.T[name_Z])
@@ -57,36 +65,23 @@ Scatter plot of the results of the Trim algorithm on AML gene expression data. E
    timeseries[0,:] = X
    timeseries[1,:] = Y
    timeseries[2,:] = Z
+
+   # Parameters for Theta score calculation
+   I = [0,1,2]
    num = 5
    tlen = len(X)
-   I = [0,1,2]
-   visualisation_conditioned_val(timeseries, I, num, tlen, name = save_folder + '/' + 'good', cond = [th1,th2])
+   nrunmax = 1000
+
+   # Calculating Theta scores
+   MI, MIz, MIz_null, MIC, Theta_S, Theta2_T, Theta2_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn = Theta_score_null_model(timeseries, I, num, tlen, nrunmax, True, True)
+
+   # Calculating decision tree thresholds
+   x = np.arange(1, num+1)
+   th1,th2,c = decision_tree(x, MIz, disp_fig=True, disp_txt_rep=True, disp_tree=True)
+
+   # Visualisation
+   visualisation_conditioned_val(timeseries, I, num, tlen, name=None, cond = [th1,th2])
 
 .. image:: output/good.png
    :width: 800
 
-.. code-block:: Python  
-
-   from trim.triadic_vis import triadic_network_vis_from_data_and_graph
-
-   ppi = pd.read_csv('data/reduce_ppi.tsv', sep = '\t')
-   graph_ppi = nx.from_pandas_edgelist(ppi, source = '0', target = '1')
-   short_range = pd.read_csv('data/short_range.txt', sep = '\t')
-
-   sub_triadic = pd.concat([short_range[short_range['P']<0.001], long_range[long_range['P']<0.001]]).reset_index()
-   sub_sub_triadic = sub_triadic.sort_values(by='Theta', ascending=False).reset_index()
-   sub_sub_triadic = sub_sub_triadic[0:10]
-   
-   set_nodes = set(sub_sub_triadic['reg']).union(set(sub_sub_triadic['node1'])).union(set(sub_sub_triadic['node2']))
-   graph_ppi.remove_edges_from(list(nx.selfloop_edges(graph_ppi)))
-   sub_graph = nx.Graph(graph_ppi.subgraph(list(set_nodes)))
-   
-   sub_final = sub_triadic[sub_triadic['node1'].isin(set_nodes)]
-   sub_final = sub_final[sub_final['node2'].isin(set_nodes)]
-   sub_final = sub_final[sub_final['reg'].isin(set_nodes)]
-   sub_final = sub_final.reset_index(drop=True)
-   top = len(sub_final)
-   triadic_network_vis_from_data_and_graph(sub_graph, sub_final, top)
-
-.. image:: output/triadic_vis_from_data.png
-   :width: 800

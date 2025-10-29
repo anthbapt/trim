@@ -14,9 +14,9 @@ def entropy(timeseries: np.ndarray, I: list):
         float: The calculated entropy value (S).
     """
     # Assign values based on indices from the triple
-    timeseries[I[0] - 1, :] = X
-    timeseries[I[1] - 1, :] = Y
-    timeseries[I[2] - 1, :] = Z
+    X = timeseries[I[0]-1,:]
+    Y = timeseries[I[1]-1,:]
+    Z = timeseries[I[2]-1,:]
 
     # Constants for calculations
     num = 5

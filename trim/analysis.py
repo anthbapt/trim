@@ -85,7 +85,7 @@ def fit(x: np.ndarray, y: np.ndarray):
     return x_fit, y_fit
 
 
-def opimise_kl(X: np.ndarray, Y: np.ndarray, Z: np.ndarray):
+def optimise_kl(X: np.ndarray, Y: np.ndarray, Z: np.ndarray):
     """
     Optimize KL divergence between two conditional distributions based on a third variable.
 
@@ -206,8 +206,8 @@ def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond =
     Y = Y_sort
     Z = sp
     
-    if cond == None:
-        cond_val = opimise_kl(X, Y, Z)
+    if cond is None:
+        cond_val = optimise_kl(X, Y, Z)
         X_sup = X[Z > cond_val]
         Y_sup = Y[Z > cond_val]
         X_inf = X[Z < cond_val]
@@ -223,7 +223,7 @@ def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond =
         g1.ax_joint.set_ylabel('Y', fontsize=15)
         plt.legend(fontsize='15')
 
-    if type(cond) is int:
+    if isinstance(cond, int):
         X_sup = X[Z > cond]
         Y_sup = Y[Z > cond]
         X_inf = X[Z <= cond]
@@ -239,7 +239,7 @@ def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond =
         g1.ax_joint.set_ylabel('Y', fontsize=15)
         plt.legend(fontsize='15')
 
-    if type(cond) is list:
+    if isinstance(cond, list):
         X_a = X[Z < cond[0]]
         Y_a = Y[Z < cond[0]]
         X_b = X[np.logical_and(Z <= cond[1], Z >= cond[0])]
@@ -271,17 +271,17 @@ def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond =
     fig.suptitle('Conditional distribution', fontsize=18)
     gs = gridspec.GridSpec(1, 3)
 
-    if type(cond) is int or cond == None:
+    if isinstance(cond, int) or cond is None:
         mg0 = SeabornFig2Grid(g0, fig, gs[0])
         mg1 = SeabornFig2Grid(g1, fig, gs[1])
-    if type(cond) is list:
+    if isinstance(cond, list):
         mg0 = SeabornFig2Grid(g0, fig, gs[0])
         mg1 = SeabornFig2Grid(g1, fig, gs[1])
         mg2 = SeabornFig2Grid(g2, fig, gs[2])
 
     gs.tight_layout(fig)
     
-    if name != None:
+    if name is not None:
         plt.savefig(name + '.png', format = 'png')
 
 
@@ -316,7 +316,7 @@ def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tle
 
     Notes:
         The function requires the seaborn library for generating the joint plots.
-        The optimized KL divergence method (`opimise_kl`) is assumed to be defined elsewhere in the codebase.
+        The optimized KL divergence method (`optimise_kl`) is assumed to be defined elsewhere in the codebase.
         The SeabornFig2Grid function is also assumed to be defined elsewhere for custom grid layout handling.
 
     """
@@ -325,8 +325,8 @@ def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tle
     X = X_sort
     Y = Y_sort
     Z = sp
-    if cond == None:
-        cond_val = opimise_kl(X, Y, Z)
+    if cond is None:
+        cond_val = optimise_kl(X, Y, Z)
         X_sup = X[Z > cond_val]
         Y_sup = Y[Z > cond_val]
         X_inf = X[Z < cond_val]
@@ -343,7 +343,7 @@ def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tle
         g1.ax_joint.set_ylabel('Y', fontsize=15)
         plt.legend(fontsize='16')
 
-    if type(cond) is int:
+    if isinstance(cond, int):
         X_sup = X[Z > cond]
         Y_sup = Y[Z > cond]
         X_inf = X[Z <= cond]
@@ -360,7 +360,7 @@ def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tle
         g1.ax_joint.set_ylabel('Y', fontsize=15)
         plt.legend(fontsize='12')
 
-    if type(cond) is list:
+    if isinstance(cond, list):
         X_a = X[Z < cond[0]]
         Y_a = Y[Z < cond[0]]
         X_b = X[np.logical_and(Z <= cond[1], Z >= cond[0])]
@@ -389,21 +389,21 @@ def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tle
     
     fig = plt.figure(figsize=(12,6))
     fig.suptitle('Conditional distribution', fontsize=18)
-    
-    if type(cond) is int or cond == None:
+
+    if isinstance(cond, int) or cond is None:
         gs = gridspec.GridSpec(1, 2)
         mg0 = SeabornFig2Grid(g0, fig, gs[0])
         mg1 = SeabornFig2Grid(g1, fig, gs[1])
-    
-    elif type(cond) is list:
+
+    elif isinstance(cond, list):
         gs = gridspec.GridSpec(1, 3)
         mg0 = SeabornFig2Grid(g0, fig, gs[0])
         mg1 = SeabornFig2Grid(g1, fig, gs[1])
         mg2 = SeabornFig2Grid(g2, fig, gs[2])
 
     gs.tight_layout(fig)
-    
-    if name != None:
+
+    if name is not None:
         plt.savefig(name + '.png', format = 'png')
         
     
@@ -437,7 +437,7 @@ def decision_tree(x_1d: np.ndarray, y_1d: np.ndarray, disp_fig: bool = False, di
 
     """
 
-    if name != None:
+    if name is not None:
         save_folder = "output"
         try : 
             os.mkdir(save_folder)
@@ -521,7 +521,7 @@ def decision_tree_val(x_1d: np.ndarray, y_1d: np.ndarray, z: np.ndarray, disp_fi
 
     """
 
-    if name != None:
+    if name is not None:
         save_folder = "output"
         try : 
             os.mkdir(save_folder)

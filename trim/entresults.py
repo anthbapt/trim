@@ -51,13 +51,13 @@ def MI_MIC_merge(data1, data2, data3 = None, key = 'Sigma', display = None, labe
             min_, max_ = zs.min(), zs.max()
             plt.scatter(x1, y1, c=z1, marker='o', s = 75, alpha=0.8, cmap = 'gist_rainbow')
             plt.clim(min_, max_)
-            plt.scatter(x2, y2, c=z3, marker='*', s= 50, edgecolor='black', alpha = 0.8, cmap = 'gist_rainbow')            
+            plt.scatter(x2, y2, c=z2, marker='*', s= 50, edgecolor='black', alpha = 0.8, cmap = 'gist_rainbow')            
             plt.clim(min_, max_)
             plt.xlim(xmin=0)
             plt.ylim(ymin=0)
             plt.xlabel('CMI', fontsize=10, color='black')
             plt.ylabel('MI', fontsize=10,color='black')
-            if label != None:
+            if label is not None:
                 plt.title(label[0])
             cbar = plt.colorbar()
             cbar.ax.set_xlabel(r'$\mathregular{\ln{(1/i)}}$'.replace('i', key), rotation=0, fontsize=10)
@@ -78,7 +78,7 @@ def MI_MIC_merge(data1, data2, data3 = None, key = 'Sigma', display = None, labe
             
             plt.xlabel('CMI', fontsize=10, color='black')
             plt.ylabel('MI', fontsize=10,color='black')
-            if label != None:
+            if label is not None:
                 plt.title(label[0])
             cbar = plt.colorbar()
             cbar.ax.set_xlabel(r'$\mathregular{\ln{(1/i)}}$'.replace('i', key), rotation=0, fontsize=10)
@@ -112,7 +112,7 @@ def MI_MIC_merge(data1, data2, data3 = None, key = 'Sigma', display = None, labe
             plt.tick_params(axis='both', which='major', labelsize=15)
             plt.xlabel('CMI', fontsize=20, color='black')
             plt.ylabel(r'$\mathregular{\Theta_\Sigma}$', fontsize=20,color='black')
-            if label != None:
+            if label is not None:
                 plt.title(label[0])
             cbar = plt.colorbar()
             if key == 'Sigma':
@@ -149,7 +149,7 @@ def MI_MIC_merge(data1, data2, data3 = None, key = 'Sigma', display = None, labe
             plt.tick_params(axis='both', which='major', labelsize=15)
             plt.xlabel('CMI', fontsize=20, color='black')
             plt.ylabel(r'$\mathregular{\Theta_\Sigma}$', fontsize=20,color='black')
-            if label != None:
+            if label is not None:
                 plt.title(label[0])
             cbar = plt.colorbar()
             if key == 'Sigma':
@@ -184,7 +184,7 @@ def MI_MIC_merge(data1, data2, data3 = None, key = 'Sigma', display = None, labe
             plt.gca().axes.set_yticks([1,5,10,15],[1,5,10,15])
             plt.xlabel('CMI', fontsize=20, color='black')
             plt.ylabel(r'$\mathregular{\Theta_\Sigma}$', fontsize=20,color='black')
-            if label != None:
+            if label is not None:
                 plt.title(label[0])
             cbar = plt.colorbar()
             if key == 'Sigma':

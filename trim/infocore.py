@@ -473,7 +473,7 @@ def sigma(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = Tru
     if null == False:
         return Sigma
     else:
-        if type(null) == int:
+        if isinstance(null, int):
             Sigma_null, T_null, Tn_null = null_model(timeseries, I, num, tlen, nrunmax, Gaussian_version = True,\
                                                                     Mutual_version = True, model = None)
             
@@ -542,7 +542,7 @@ def t(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, n
     if null == False:
         return T
     else:
-        if type(null) == int:
+        if isinstance(null, int):
             Sigma_null, T_null, Tn_null = null_model(timeseries, I, num, tlen, nrunmax, Gaussian_version = True,\
                                                                     Mutual_version = True, model = None)
             
@@ -611,7 +611,7 @@ def tn(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, 
     if null == False:
         return Tn
     else:
-        if type(null) == int:
+        if isinstance(null, int):
             Sigma_null, T_null, Tn_null = null_model(timeseries, I, num, tlen, nrunmax, Gaussian_version = True,\
                                                                     Mutual_version = True, model = None)
             

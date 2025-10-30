@@ -128,19 +128,19 @@ def optimise_kl(X: np.ndarray, Y: np.ndarray, Z: np.ndarray):
         fit_inf_cond, fit_sup_cond = fit(inf_cond, sup_cond)
         
         # Test positivity of the two fits for the KL divergence
-        if (np.all(fit_inf_cond[1] >= 0) == False) and (np.all(fit_sup_cond[1] >= 0) == True):
+        if (not np.all(fit_inf_cond[1] >= 0)) and (np.all(fit_sup_cond[1] >= 0)):
             temp = np.where(fit_inf_cond[1] >= 0)
             fit_sup = fit_sup_cond[1][temp]
             fit_inf = fit_inf_cond[1][temp]
-        elif (np.all(fit_sup_cond[1] >= 0) == False) and (np.all(fit_inf_cond[1] >= 0) == True):
+        elif (not np.all(fit_sup_cond[1] >= 0)) and (np.all(fit_inf_cond[1] >= 0)):
             temp = np.where(fit_sup_cond[1] >= 0)
             fit_inf = fit_inf_cond[1][temp]
             fit_sup = fit_sup_cond[1][temp]
-        elif (np.all(fit_inf_cond[1] >= 0) == False) and (np.all(fit_sup_cond[1] >= 0) == False):
+        elif (not np.all(fit_inf_cond[1] >= 0)) and (not np.all(fit_sup_cond[1] >= 0)):
             temp = max(np.min(np.where(fit_sup_cond[1] >= 0)), np.min(np.where(fit_inf_cond[1] >= 0)))
             fit_inf = fit_inf_cond[1][temp::]
             fit_sup = fit_sup_cond[1][temp::]
-        elif (np.all(fit_inf_cond[1] >= 0) == True) and (np.all(fit_sup_cond[1] >= 0) == True):
+        elif (np.all(fit_inf_cond[1] >= 0)) and (np.all(fit_sup_cond[1] >= 0)):
             fit_inf = fit_inf_cond[1]
             fit_sup = fit_sup_cond[1]
         
@@ -155,7 +155,7 @@ def optimise_kl(X: np.ndarray, Y: np.ndarray, Z: np.ndarray):
     return cond_val
 
 
-def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond = None):
+def visualisation_conditioned(timeseries, triplet, num, tlen, name: str = None, cond = None):
     """
     Visualize conditioned distributions based on the values of a third variable.
 
@@ -168,7 +168,7 @@ def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond =
         timeseries (array-like): 
             A data structure (e.g., pandas DataFrame, numpy array) that contains the time series data 
             for multiple variables. 
-        I (list or array-like): 
+        triplet (list or array-like): 
             A list of indices or criteria used to filter or select data from the `timeseries`.
         num (int): 
             The number of samples to consider for conditioning the distributions.
@@ -198,10 +198,10 @@ def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond =
           the resulting plots to a PNG file.
     """
     
-    idx = timeseries[I[2]].argsort()
-    Z_sort = timeseries[I[2]][idx]
-    
-    X_sort, Y_sort, sp = ifc.timeseries_quantile(timeseries, I, num, tlen)
+    idx = timeseries[triplet[2]].argsort()
+    Z_sort = timeseries[triplet[2]][idx]
+
+    X_sort, Y_sort, sp = ifc.timeseries_quantile(timeseries, triplet, num, tlen)
     X = X_sort
     Y = Y_sort
     Z = sp
@@ -272,12 +272,12 @@ def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond =
     gs = gridspec.GridSpec(1, 3)
 
     if isinstance(cond, int) or cond is None:
-        mg0 = SeabornFig2Grid(g0, fig, gs[0])
-        mg1 = SeabornFig2Grid(g1, fig, gs[1])
+        SeabornFig2Grid(g0, fig, gs[0])
+        SeabornFig2Grid(g1, fig, gs[1])
     if isinstance(cond, list):
-        mg0 = SeabornFig2Grid(g0, fig, gs[0])
-        mg1 = SeabornFig2Grid(g1, fig, gs[1])
-        mg2 = SeabornFig2Grid(g2, fig, gs[2])
+        SeabornFig2Grid(g0, fig, gs[0])
+        SeabornFig2Grid(g1, fig, gs[1])
+        SeabornFig2Grid(g2, fig, gs[2])
 
     gs.tight_layout(fig)
     
@@ -285,7 +285,7 @@ def visualisation_conditioned(timeseries, I, num, tlen, name: str = None, cond =
         plt.savefig(name + '.png', format = 'png')
 
 
-def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tlen: int, name: str = None, cond: float = None):
+def visualisation_conditioned_val(timeseries: np.ndarray, triplet: list, num: int, tlen: int, name: str = None, cond: float = None):
     """
     Visualizes the conditional distribution of two variables (X, Y) based on a third variable (Z) 
     using joint plots for various conditions on Z.
@@ -302,7 +302,7 @@ def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tle
 
     Args:
         timeseries (np.ndarray): A 2D numpy array where each row represents a time step and each column represents a variable.
-        I (list): A list of indices to be used for processing the time series.
+        triplet (list): A list of indices to be used for processing the time series.
         num (int): A numerical value to adjust quantile thresholds in the analysis.
         tlen (int): Length of the time series or number of time steps in the series.
         name (str, optional): The name for the saved image file. If None, no file is saved.
@@ -321,7 +321,7 @@ def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tle
 
     """
 
-    X_sort, Y_sort, Z_sort, sp = ifc.timeseries_quantile_val(timeseries, I, num, tlen)
+    X_sort, Y_sort, Z_sort, sp = ifc.timeseries_quantile_val(timeseries, triplet, num, tlen)
     X = X_sort
     Y = Y_sort
     Z = sp
@@ -392,14 +392,14 @@ def visualisation_conditioned_val(timeseries: np.ndarray, I: list, num: int, tle
 
     if isinstance(cond, int) or cond is None:
         gs = gridspec.GridSpec(1, 2)
-        mg0 = SeabornFig2Grid(g0, fig, gs[0])
-        mg1 = SeabornFig2Grid(g1, fig, gs[1])
+        SeabornFig2Grid(g0, fig, gs[0])
+        SeabornFig2Grid(g1, fig, gs[1])
 
     elif isinstance(cond, list):
         gs = gridspec.GridSpec(1, 3)
-        mg0 = SeabornFig2Grid(g0, fig, gs[0])
-        mg1 = SeabornFig2Grid(g1, fig, gs[1])
-        mg2 = SeabornFig2Grid(g2, fig, gs[2])
+        SeabornFig2Grid(g0, fig, gs[0])
+        SeabornFig2Grid(g1, fig, gs[1])
+        SeabornFig2Grid(g2, fig, gs[2])
 
     gs.tight_layout(fig)
 
@@ -465,7 +465,7 @@ def decision_tree(x_1d: np.ndarray, y_1d: np.ndarray, disp_fig: bool = False, di
     else:
         output = list(regr.tree_.value[index_leaves,0,0])
 
-    if disp_fig == True or name is not None:
+    if disp_fig or (name is not None):
         plt.figure()
         plt.scatter(x, y, s = 50, edgecolor = "black", c = "darkorange", label = "data")
         plt.plot(x_test, y_pred, color = "cornflowerblue", label = "max_depth=1", linewidth = 2)
@@ -475,7 +475,7 @@ def decision_tree(x_1d: np.ndarray, y_1d: np.ndarray, disp_fig: bool = False, di
         if name is not None:
             plt.savefig(name + '_tree1',bbox_inches="tight", dpi = 600)
     
-    if disp_tree == True or name is not None:
+    if disp_tree or (name is not None):
         fig = plt.figure(figsize = (8,4), dpi = 600)
         _ = tree.plot_tree(regr, filled = True, feature_names = ['z', 'z'], impurity = False, fontsize = 10)
         if name is not None:
@@ -552,7 +552,7 @@ def decision_tree_val(x_1d: np.ndarray, y_1d: np.ndarray, z: np.ndarray, disp_fi
     else:
         output = list(regr.tree_.value[index_leaves,0,0])
 
-    if disp_fig == True or name is not None:
+    if disp_fig or (name is not None):
         plt.figure()
         plt.scatter(x, y, s = 50, edgecolor = "black", c = "darkorange", label = "data")
         plt.plot(x_test, y_pred, color = "cornflowerblue", label = "max_depth=1", linewidth = 2)
@@ -563,7 +563,7 @@ def decision_tree_val(x_1d: np.ndarray, y_1d: np.ndarray, z: np.ndarray, disp_fi
         if name is not None:
             plt.savefig(name + '_tree1',bbox_inches="tight", dpi = 600)
     
-    if disp_tree == True or name is not None:
+    if disp_tree or (name is not None):
         fig = plt.figure(figsize = (8,4), dpi = 600)
         _ = tree.plot_tree(regr, filled = True, feature_names = ['z', 'z'], impurity = False, fontsize = 10)
         if name is not None:

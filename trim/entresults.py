@@ -8,7 +8,7 @@ from trim.analysis import decision_tree
 import matplotlib as mpl
 from matplotlib.colors import ListedColormap
 
-def edge(s):
+def to_edge(s):
     """
     Turn txt output file into list
 
@@ -25,7 +25,6 @@ def edge(s):
     e1 = re.split(r' ', e)
     e1.pop()
     return e1
-
 
 def MI_MIC_merge(data1, data2, data3 = None, key = 'Sigma', display = None, label = None):
     copper = mpl.colormaps['copper'].resampled(256)
@@ -194,11 +193,10 @@ def MI_MIC_merge(data1, data2, data3 = None, key = 'Sigma', display = None, labe
             #plt.show()
             #plt.savefig('fig6_entropy_norm.png',dpi = 600)
             
-            
 def edge_processing(names:list):
     edges = []
     for i in names:
-        edges.append(edge(i))
+        edges.append(to_edge(i))
     for i in range(len(edges)):
         for j in range(len(edges[i])):
             edges[i][j]=float(edges[i][j])
@@ -206,31 +204,29 @@ def edge_processing(names:list):
     edges=edges.reshape(12,8,7)
     return edges
 
-
-def entropy(timeseries, I):
+def entropy(timeseries, triplet):
     """
-    calculates entropy for triple
+    calculates entropy for triplet
 
     Args:
         timeseries: timeseries data of network
-        I: chosen triple
+        triplet: chosen triplet
 
     Returns:
         S: Entropy
     """
-    X = timeseries[I[0]-1,:]
-    Y = timeseries[I[1]-1,:]
-    Z = timeseries[I[2]-1,:]
-    num = 100
+    X = timeseries[triplet[0]-1,:]
+    Y = timeseries[triplet[1]-1,:]
+    Z = timeseries[triplet[2]-1,:]
+    n_intervals = 100
     tlen = 3000
     nrunmax = 2
-    MI, MIz, MIz_null, MIC, Theta_S, Theta2_T, Theta2_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn = ifc.Theta_score_null_model(timeseries, I, num, tlen, nrunmax, True, True)
-    x = range(1, num+1)
+    MI, MIz, MIz_null, MIC, Theta_S, Theta2_T, Theta2_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn = ifc.Theta_score_null_model(timeseries, triplet, n_intervals, tlen, nrunmax, True, True)
+    x = range(1, n_intervals+1)
     try:
-        th1, th2, c = decision_tree(x, MIz, disp_fig=False, disp_txt_rep=False,
-              disp_tree=False)
-        I = np.array(I)-1
-        X, Y, Z = ifc.timeseries_quantile(timeseries, I, num, tlen)
+        th1, th2, c = decision_tree(x, MIz, disp_fig=False, disp_txt_rep=False, disp_tree=False)
+        triplet = np.array(triplet)-1
+        X, Y, Z = ifc.timeseries_quantile(timeseries, triplet, n_intervals, tlen)
         X_a = X[Z < th1]
         Y_a = Y[Z < th1]
         #P_sep = 10
@@ -241,9 +237,11 @@ def entropy(timeseries, I):
         ival_Y = (Y_max-Y_min)/P_sep
         for i in range(len(X_a)):
             x = np.floor(((X_a[i]-X_min))/ival_X)
-            if x >= P_sep: x = P_sep-1
+            if x >= P_sep: 
+                x = P_sep-1
             y = np.floor(((Y_a[i]-Y_min))/ival_Y)
-            if y >= P_sep: y = P_sep-1
+            if y >= P_sep: 
+                y = P_sep-1
             n[int(x),int(y)] += 1
         Y_1 = 0
         for i in range(P_sep):
@@ -257,9 +255,11 @@ def entropy(timeseries, I):
         ival_Y = (Y_max-Y_min)/P_sep
         for i in range(len(X_b)):
             x = np.floor(((X_b[i]-X_min))/ival_X)
-            if x >= P_sep: x = P_sep-1
+            if x >= P_sep: 
+                x = P_sep-1
             y = np.floor(((Y_b[i]-Y_min))/ival_Y)
-            if y >= P_sep: y = P_sep-1
+            if y >= P_sep: 
+                y = P_sep-1
             n[int(x),int(y)] += 1
         Y_2 = 0
         for i in range(P_sep):
@@ -273,9 +273,11 @@ def entropy(timeseries, I):
         ival_Y = (Y_max-Y_min)/P_sep
         for i in range(len(X_c)):
             x = np.floor(((X_c[i]-X_min))/ival_X)
-            if x >= P_sep: x = P_sep-1
+            if x >= P_sep: 
+                x = P_sep-1
             y = np.floor(((Y_c[i]-Y_min))/ival_Y)
-            if y >= P_sep: y = P_sep-1
+            if y >= P_sep: 
+                y = P_sep-1
             n[int(x),int(y)] += 1
         Y_3 = 0
         for i in range(P_sep):
@@ -289,7 +291,7 @@ def entropy(timeseries, I):
     return S_norm
 
 def get_distances(csv_results,G):
-    if type(csv_results) == str:
+    if isinstance(csv_results, str):
         values = pd.read_csv(csv_results)
     else:
         values = csv_results

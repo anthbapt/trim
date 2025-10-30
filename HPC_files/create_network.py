@@ -1,11 +1,11 @@
 import numpy as np
 import random
 import seaborn as sns
-sns.set_style("whitegrid", {'axes.grid' : False})
 from model import NDwTIs
 from computation import create_node_edge_incidence_matrix
 import networkx as nx
 
+sns.set_style("whitegrid", {'axes.grid' : False})
 
 # randomly generate the network, here BA graph
 #G = nx.barabasi_albert_graph(100,1.1)

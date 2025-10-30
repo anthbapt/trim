@@ -30,11 +30,10 @@ def create_node_edge_incidence_matrix(edge_list:list):
     # Create the node-edge incidence matrix
     b_ij = [-1] * n_edges + [1] * n_edges # the (i,j)-th element of B in a sequence
     row_i = [e[0]-1 for e in edge_list] + [e[1]-1 for e in edge_list] # the row indices (i) of the (i, j)-th element
-    col_j = [l for l in range(n_edges)] * 2 # the column indices (i) of the (i, j)-th element
+    col_j = [i for i in range(n_edges)] * 2 # the column indices (i) of the (i, j)-th element
     B = csc_matrix((np.array(b_ij), (np.array(row_i), np.array(col_j))), dtype=np.int8)
 
     return B.toarray()
-
 
 def extract_by_std(data:np.ndarray, n_std:float=3.):
     """Extract the data within a given number of standard deviations from its mean.
@@ -73,7 +72,6 @@ def extract_by_std(data:np.ndarray, n_std:float=3.):
 
     # Compute the core range
     return data_min, data_max
-
 
 def freedman_diaconis_rule(data:np.ndarray, power:float=1./3., factor:float=2.):
     """Compute the number of bins using the Freedman-Diaconis rule.
@@ -134,7 +132,6 @@ def freedman_diaconis_rule(data:np.ndarray, power:float=1./3., factor:float=2.):
         bin_edges = bin_edges[0]
     
     return bin_edges
-
 
 def _check_data_shape(data:np.ndarray):
     """Check the shape of the data.
@@ -574,7 +571,6 @@ def estimate_mutual_information(X:np.ndarray, Y:np.ndarray, bins:Union[str, int]
         )
 
     return mi
-
 
 def covariance(data:np.ndarray):
     """Calculate the covariance matrix.

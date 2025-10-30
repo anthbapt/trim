@@ -4,43 +4,43 @@ import scipy as sp
 import numpy as np
 
 
-def timeseries_quantile(timeseries: np.ndarray, I: list, num: int, tlen: int):
+def timeseries_quantile(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int):
     """
     Computes quantile labels and sorts corresponding values from a time series dataset.
 
-    This function selects the last `tlen` time points from a 2D time series array and sorts
-    values from three specified rows (via indices in `I`) based on the values of the third row.
-    It then assigns quantile labels to the sorted third row values, splitting them into `num`
+    This function selects the last `time_window` time points from a 2D time series array and sorts
+    values from three specified rows (via indices in `triplet`) based on the values of the third row.
+    It then assigns quantile labels to the sorted third row values, splitting them into `n_intervals`
     quantile bins.
 
     Args:
         timeseries (np.ndarray): 
             A 2D NumPy array of shape (n_series, time_steps) representing the time series data.
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of the rows to use. 
-            - `I[0]`: used for X values
-            - `I[1]`: used for Y values
-            - `I[2]`: used for sorting and quantile labeling
-        num (int): 
+            - `triplet[0]`: used for X values
+            - `triplet[1]`: used for Y values
+            - `triplet[2]`: used for sorting and quantile labeling
+        n_intervals (int): 
             Number of quantile bins to compute.
-        tlen (int): 
+        time_window (int): 
             Length of the time window (from the end) to consider in the time series.
 
     Returns:
         Tuple[np.ndarray, np.ndarray, np.ndarray]: 
-            - `X_sort`: Values from the row at `I[0]`, sorted by `I[2]`
-            - `Y_sort`: Values from the row at `I[1]`, sorted by `I[2]`
-            - `sp`: Quantile labels (1 to `num`) corresponding to sorted values of `I[2]`
+            - `X_sort`: Values from the row at `triplet[0]`, sorted by `triplet[2]`
+            - `Y_sort`: Values from the row at `triplet[1]`, sorted by `triplet[2]`
+            - `sp`: Quantile labels (1 to `n_intervals`) corresponding to sorted values of `triplet[2]`
     """
 
-    timeseries = timeseries[:,-tlen:]
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
+    timeseries = timeseries[:,-time_window:]
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
     idx = Z.argsort()
     X_sort = X[idx]
     Y_sort = Y[idx]
-    sp = np.array_split(Z, num)
+    sp = np.array_split(Z, n_intervals)
     compt = 1
     for k in range(len(sp)):
         sp[k] = compt*np.ones(len(sp[k]))
@@ -51,44 +51,44 @@ def timeseries_quantile(timeseries: np.ndarray, I: list, num: int, tlen: int):
     return X_sort, Y_sort, sp
 
     
-def timeseries_quantile_val(timeseries: np.ndarray, I: list, num: int, tlen: int):
+def timeseries_quantile_val(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int):
     """
     Computes quantile labels and sorted values from specified rows of time series data.
 
-    This function selects the last `tlen` time steps from the input 2D time series array.
-    It extracts values from three specified rows (by indices in `I`), sorts them based on 
-    the values from the third row, and assigns quantile labels across `num` bins.
+    This function selects the last `time_window` time steps from the input 2D time series array.
+    It extracts values from three specified rows (by indices in `triplet`), sorts them based on
+    the values from the third row, and assigns quantile labels across `n_intervals` bins.
 
     Args:
         timeseries (np.ndarray): 
             A 2D NumPy array of shape (n_series, time_steps) representing the time series data.
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of the rows to use:
-            - `I[0]`: row for X values
-            - `I[1]`: row for Y values
-            - `I[2]`: row used for sorting and quantile labeling
-        num (int): 
+            - `triplet[0]`: row for X values
+            - `triplet[1]`: row for Y values
+            - `triplet[2]`: row used for sorting and quantile labeling
+        n_intervals (int): 
             The number of quantile bins to compute.
-        tlen (int): 
+        time_window (int): 
             The length of the trailing time window to consider.
 
     Returns:
         Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: 
-            - `X_sort`: Values from row `I[0]`, sorted by values in `I[2]`
-            - `Y_sort`: Values from row `I[1]`, sorted by values in `I[2]`
-            - `Z_sort`: Sorted values from row `I[2]`, used for quantile computation
-            - `sp`: Quantile labels (ranging from 1 to `num`) for the values in `Z_sort`
+            - `X_sort`: Values from row `triplet[0]`, sorted by values in `triplet[2]`
+            - `Y_sort`: Values from row `triplet[1]`, sorted by values in `triplet[2]`
+            - `Z_sort`: Sorted values from row `triplet[2]`, used for quantile computation
+            - `sp`: Quantile labels (ranging from 1 to `n_intervals`) for the values in `Z_sort`
     """
 
-    timeseries = timeseries[:,-tlen:]
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
+    timeseries = timeseries[:,-time_window:]
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
     idx = Z.argsort()
     Z_sort = Z[idx]
     X_sort = X[idx]
     Y_sort = Y[idx]
-    sp = np.array_split(Z, num)
+    sp = np.array_split(Z, n_intervals)
     compt = 1
     for k in range(len(sp)):
         sp[k] = compt*np.ones(len(sp[k]))
@@ -99,28 +99,28 @@ def timeseries_quantile_val(timeseries: np.ndarray, I: list, num: int, tlen: int
     return X_sort, Y_sort, Z_sort, sp
 
 
-def mutual_information_analysis_continuous(timeseries: np.ndarray, I: list, num: int, tlen: int):
+def mutual_information_analysis_continuous(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int):
     """
     Analyzes mutual information between continuous variables in a time series.
 
     This function computes the overall mutual information between two continuous variables 
     (rows of a 2D time series array), as well as how that mutual information varies across 
     intervals defined by a third variable. The time series is first truncated to the last 
-    `tlen` points, then sorted based on a third row (specified in `I[2]`) and divided into 
-    `num` equally sized intervals. Mutual information is computed in each interval, and 
+    `time_window` points, then sorted based on a third row (specified in `triplet[2]`) and divided into 
+    `n_intervals` equally sized intervals. Mutual information is computed in each interval, and 
     summary statistics are reported.
 
     Args:
         timeseries (np.ndarray): 
             A 2D NumPy array of shape (n_series, time_steps) representing the time series data.
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows used in the analysis:
-            - `I[0]`: row for X (input variable)
-            - `I[1]`: row for Y (target variable)
-            - `I[2]`: row used to sort and divide data into intervals
-        num (int): 
+            - `triplet[0]`: row for X (input variable)
+            - `triplet[1]`: row for Y (target variable)
+            - `triplet[2]`: row used to sort and divide data into intervals
+        n_intervals (int): 
             Number of intervals to divide the sorted data into for localized mutual information analysis.
-        tlen (int): 
+        time_window (int): 
             Length of the time window to consider from the end of the series.
 
     Returns:
@@ -133,12 +133,12 @@ def mutual_information_analysis_continuous(timeseries: np.ndarray, I: list, num:
             - `Tn`: Maximum absolute difference between consecutive mutual information values (temporal variability).
     """
 
-    timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/num))
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
-    Xa = np.zeros((tlen,2))
+    timeseries = timeseries[:,-time_window:]
+    dtlen = int(np.floor(time_window/n_intervals))
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
+    Xa = np.zeros((time_window,2))
     Xa[:,0] = X
     MI = mutual_info_regression(Xa, Y, discrete_features = False)
     MI = MI[0]
@@ -146,9 +146,9 @@ def mutual_information_analysis_continuous(timeseries: np.ndarray, I: list, num:
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
-    MIz = np.zeros((num))
+    MIz = np.zeros((n_intervals))
     
-    for i in range(num):
+    for i in range(n_intervals):
         Xn[:,0] = X_sort[i*dtlen:(i+1)*dtlen]
         y = Y_sort[i*dtlen:(i+1)*dtlen]
         mi = mutual_info_regression(Xn, y, discrete_features = False)
@@ -157,12 +157,12 @@ def mutual_information_analysis_continuous(timeseries: np.ndarray, I: list, num:
     MIC = np.mean(MIz)
     Sigma = np.std(MIz)
     T = np.max(MIz)-np.min(MIz)
-    Tn = np.max(abs(MIz[0:num-1]-MIz[1:num]))
+    Tn = np.max(abs(MIz[0:n_intervals-1]-MIz[1:n_intervals]))
     
     return MI, MIz, MIC, Sigma, T, Tn
 
 
-def mutual_information_analysis_continuous_extended(timeseries: np.ndarray, I: list, num: int, tlen: int):
+def mutual_information_analysis_continuous_extended(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int):
     """
     Extended analysis of mutual information between continuous variables in a time series.
 
@@ -175,14 +175,14 @@ def mutual_information_analysis_continuous_extended(timeseries: np.ndarray, I: l
     Args:
         timeseries (np.ndarray): 
             A 2D NumPy array of shape (n_series, time_steps) representing the time series data.
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows used in the analysis:
-            - `I[0]`: row for X (input variable)
-            - `I[1]`: row for Y (target variable)
-            - `I[2]`: row used to sort and divide data into intervals
-        num (int): 
+            - `triplet[0]`: row for X (input variable)
+            - `triplet[1]`: row for Y (target variable)
+            - `triplet[2]`: row used to sort and divide data into intervals
+        n_intervals (int): 
             Number of intervals to divide the sorted data into for localized mutual information analysis.
-        tlen (int): 
+        time_window (int): 
             The length of the time window to consider from the end of the series.
 
     Returns:
@@ -199,12 +199,12 @@ def mutual_information_analysis_continuous_extended(timeseries: np.ndarray, I: l
             - `MI2`: Mutual information of the last third of the data.
     """
 
-    timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/num))
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
-    Xa = np.zeros((tlen,2))
+    timeseries = timeseries[:,-time_window:]
+    dtlen = int(np.floor(time_window/n_intervals))
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
+    Xa = np.zeros((time_window,2))
     Xa[:,0] = X
     MI = mutual_info_regression(Xa, Y, discrete_features = False)
     MI = MI[0]
@@ -214,9 +214,9 @@ def mutual_information_analysis_continuous_extended(timeseries: np.ndarray, I: l
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
     Zn = np.zeros((dtlen,2))
-    MIz = np.zeros((num))
-    z = np.zeros((num))
-    for i in range(num):
+    MIz = np.zeros((n_intervals))
+    z = np.zeros((n_intervals))
+    for i in range(n_intervals):
         Xn[:,0] = X_sort[i*dtlen:(i+1)*dtlen]
         Zn[:,0] = Z_sort[i*dtlen:(i+1)*dtlen]
         y = Y_sort[i*dtlen:(i+1)*dtlen]
@@ -227,11 +227,11 @@ def mutual_information_analysis_continuous_extended(timeseries: np.ndarray, I: l
     MIC = np.mean(MIz)
     Sigma = np.std(MIz)
     T = np.max(MIz)-np.min(MIz)
-    Tn = np.max(abs(MIz[0:num-1]-MIz[1:num]))
+    Tn = np.max(abs(MIz[0:n_intervals-1]-MIz[1:n_intervals]))
     Corr_Sigma = sp.stats.pearsonr(z, MIz)[0]
     
     MINDYz = np.zeros((3))
-    dtlen = int(np.floor(tlen/3))
+    dtlen = int(np.floor(time_window/3))
     Xn = np.zeros((dtlen,2))
     for i in range(3):
         Xn[:,0] = X_sort[i*dtlen:(i+1)*dtlen]
@@ -245,7 +245,7 @@ def mutual_information_analysis_continuous_extended(timeseries: np.ndarray, I: l
     return MI, MIz, MIC, Corr_Sigma, Sigma, T, Tn, MINDY, MI1, MI2
 
 
-def mindy_final(timeseries: np.ndarray, I: list, tlen: int):
+def mindy_final(timeseries: np.ndarray, triplet: list, time_window: int):
     """
     Computes the MINDy measure between continuous variables.
 
@@ -261,12 +261,12 @@ def mindy_final(timeseries: np.ndarray, I: list, tlen: int):
     Args:
         timeseries (np.ndarray): 
             A 2D NumPy array of shape (n_series, time_steps) representing the time series data.
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows used in the analysis:
-            - `I[0]`: row for X (input variable)
-            - `I[1]`: row for Y (target variable)
-            - `I[2]`: row used to sort and divide data
-        tlen (int): 
+            - `triplet[0]`: row for X (input variable)
+            - `triplet[1]`: row for Y (target variable)
+            - `triplet[2]`: row used to sort and divide data
+        time_window (int): 
             The length of the time window to consider for analysis (i.e., the number of time steps).
 
     Returns:
@@ -276,11 +276,11 @@ def mindy_final(timeseries: np.ndarray, I: list, tlen: int):
             - `MI2`: Mutual information of the last third of the time series.
     """
     
-    timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/3))
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
+    timeseries = timeseries[:,-time_window:]
+    dtlen = int(np.floor(time_window/3))
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
     idx = Z.argsort()
     X_sort = X[idx]
     Y_sort = Y[idx]
@@ -298,7 +298,7 @@ def mindy_final(timeseries: np.ndarray, I: list, tlen: int):
     return MINDY, MI1, MI2
 
 
-def mindy(timeseries:np.ndarray, I:list, tlen:int):
+def mindy(timeseries:np.ndarray, triplet:list, time_window:int):
     """
     Computes the MINDy measure between continuous variables.
 
@@ -314,12 +314,12 @@ def mindy(timeseries:np.ndarray, I:list, tlen:int):
     Args:
         timeseries (numpy.ndarray): 
             A 2D NumPy array of shape (n_series, time_steps) representing the time series data.
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows used in the analysis:
-            - `I[0]`: row for X (input variable)
-            - `I[1]`: row for Y (target variable)
-            - `I[2]`: row used to sort and divide data into intervals
-        tlen (int): 
+            - `triplet[0]`: row for X (input variable)
+            - `triplet[1]`: row for Y (target variable)
+            - `triplet[2]`: row used to sort and divide data into intervals
+        time_window (int): 
             The length of the time window to consider for analysis (i.e., the number of time steps).
 
     Returns:
@@ -334,11 +334,11 @@ def mindy(timeseries:np.ndarray, I:list, tlen:int):
             - `oldMI2` (float): Mutual information of the last third using `information_mutual`.
     """
 
-    timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/3))
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
+    timeseries = timeseries[:,-time_window:]
+    dtlen = int(np.floor(time_window/3))
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
     idx = Z.argsort()
     X_sort = X[idx]
     Y_sort = Y[idx]
@@ -361,7 +361,7 @@ def mindy(timeseries:np.ndarray, I:list, tlen:int):
     return MINDY, MI1, MI2, oldMINDY, oldMI1, oldMI2
     
 
-def mutual_information(timeseries: np.ndarray, I: list, num: int, tlen: int):
+def mutual_information(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int):
     """
     Computes mutual information measures between continuous variables in a time series.
 
@@ -372,14 +372,14 @@ def mutual_information(timeseries: np.ndarray, I: list, num: int, tlen: int):
     Args:
         timeseries (np.ndarray): 
             A 2D NumPy array of shape (n_series, time_steps) representing the time series data.
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows used in the analysis:
-            - `I[0]`: row for X (input variable)
-            - `I[1]`: row for Y (target variable)
-            - `I[2]`: row used to sort and divide data into intervals
-        num (int): 
+            - `triplet[0]`: row for X (input variable)
+            - `triplet[1]`: row for Y (target variable)
+            - `triplet[2]`: row used to sort and divide data into intervals
+        n_intervals (int): 
             Number of intervals to divide the time series for localized mutual information analysis.
-        tlen (int): 
+        time_window (int): 
             The length of the time window to consider for analysis (i.e., the number of time steps).
 
     Returns:
@@ -389,12 +389,12 @@ def mutual_information(timeseries: np.ndarray, I: list, num: int, tlen: int):
             - `MIC` (float): Mean mutual information across all intervals.
     """
 
-    timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/num))
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
-    Xa = np.zeros((tlen,2))
+    timeseries = timeseries[:,-time_window:]
+    dtlen = int(np.floor(time_window/n_intervals))
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
+    Xa = np.zeros((time_window,2))
     Xa[:,0] = X
     MI = mutual_info_regression(Xa, Y, discrete_features = False)
     MI = MI[0]
@@ -402,9 +402,9 @@ def mutual_information(timeseries: np.ndarray, I: list, num: int, tlen: int):
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
-    MIz = np.zeros((num))
+    MIz = np.zeros((n_intervals))
     
-    for i in range(num):
+    for i in range(n_intervals):
         Xn[:,0] = X_sort[i*dtlen:(i+1)*dtlen]
         y = Y_sort[i*dtlen:(i+1)*dtlen]
         mi = mutual_info_regression(Xn, y, discrete_features = False)
@@ -415,7 +415,7 @@ def mutual_information(timeseries: np.ndarray, I: list, num: int, tlen: int):
     return MI, MIz, MIC
 
 
-def sigma(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, nrunmax: int = 5000):
+def sigma_measure(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int, null: bool = True, n_max_run: int = 5000):
     """
     Computes the standard deviation of mutual information values between continuous variables in a time series.
     This is defined as the Sigma measure.
@@ -427,19 +427,19 @@ def sigma(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = Tru
     Args:
         timeseries (np.ndarray): 
             A 2D NumPy array of shape (n_series, time_steps) representing the time series data.
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows used in the analysis:
-            - `I[0]`: row for X (input variable)
-            - `I[1]`: row for Y (target variable)
-            - `I[2]`: row used to sort and divide data into intervals
-        num (int): 
+            - `triplet[0]`: row for X (input variable)
+            - `triplet[1]`: row for Y (target variable)
+            - `triplet[2]`: row used to sort and divide data into intervals
+        n_intervals (int): 
             Number of intervals to divide the time series for localized mutual information analysis.
-        tlen (int): 
+        time_window (int): 
             The length of the time window to consider for analysis (i.e., the number of time steps).
         null (bool or int, optional): 
             If False, the function only computes the standard deviation of mutual information. 
             If an integer, simulates a null model with the specified number of runs. Defaults to True.
-        nrunmax (int, optional): 
+        n_max_run (int, optional): 
             Maximum number of runs for the null model simulation. Default is 5000.
 
     Returns:
@@ -453,29 +453,28 @@ def sigma(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = Tru
         TypeError: If `null` is not False or an integer.
     """
 
-    timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/num))
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
+    timeseries = timeseries[:,-time_window:]
+    dtlen = int(np.floor(time_window/n_intervals))
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
     idx = Z.argsort()
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
-    MIz = np.zeros((num))
-    for i in range(num):
+    MIz = np.zeros((n_intervals))
+    for i in range(n_intervals):
         Xn[:,0] = X_sort[i*dtlen:(i+1)*dtlen]
         y = Y_sort[i*dtlen:(i+1)*dtlen]
         mi = mutual_info_regression(Xn, y, discrete_features = False)
         MIz[i] = mi[0]
         
     Sigma = np.std(MIz)
-    if null == False:
+    if not null:
         return Sigma
     else:
         if isinstance(null, int):
-            Sigma_null, T_null, Tn_null = null_model(timeseries, I, num, tlen, nrunmax, Gaussian_version = True,\
-                                                                    Mutual_version = True, model = None)
+            Sigma_null, T_null, Tn_null = null_model(timeseries, triplet, n_intervals, time_window, n_max_run, gaussian = True, mutual = True, model = None)
             
             return Sigma, Sigma_null
     
@@ -483,7 +482,7 @@ def sigma(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = Tru
             raise TypeError("Only integers or False accepted")
             
 
-def t(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, nrunmax: int = 5000):
+def t_measure(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int, null: bool = True, n_max_run: int = 5000):
     """
     Computes the range of mutual information values between continuous variables in a time series.
     This is defined as the T measure.
@@ -495,19 +494,19 @@ def t(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, n
     Args:
         timeseries (np.ndarray): 
             A 2D NumPy array representing the time series data (shape: n_series, time_steps).
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows used in the analysis:
-            - `I[0]`: row for X (input variable)
-            - `I[1]`: row for Y (target variable)
-            - `I[2]`: row used to sort and divide data into intervals.
-        num (int): 
+            - `triplet[0]`: row for X (input variable)
+            - `triplet[1]`: row for Y (target variable)
+            - `triplet[2]`: row used to sort and divide data into intervals.
+        n_intervals (int): 
             Number of intervals to divide the time series for localized mutual information analysis.
-        tlen (int): 
+        time_window (int): 
             The length of the time window to consider for analysis (i.e., the number of time steps).
         null (bool or int, optional): 
             If False, the function only computes the range of mutual information. 
             If an integer, simulates a null model with the specified number of runs. Defaults to True.
-        nrunmax (int, optional): 
+        n_max_run (int, optional): 
             Maximum number of runs for the null model simulation. Default is 5000.
 
     Returns:
@@ -521,30 +520,29 @@ def t(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, n
         TypeError: If `null` is not False or an integer.
     """
 
-    timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/num))
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
+    timeseries = timeseries[:,-time_window:]
+    dtlen = int(np.floor(time_window/n_intervals))
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
     idx = Z.argsort()
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
-    MIz = np.zeros((num))
+    MIz = np.zeros((n_intervals))
     
-    for i in range(num):
+    for i in range(n_intervals):
         Xn[:,0] = X_sort[i*dtlen:(i+1)*dtlen]
         y = Y_sort[i*dtlen:(i+1)*dtlen]
         mi = mutual_info_regression(Xn, y, discrete_features = False)
         MIz[i] = mi[0]
         
     T = np.max(MIz)-np.min(MIz)
-    if null == False:
+    if not null:
         return T
     else:
         if isinstance(null, int):
-            Sigma_null, T_null, Tn_null = null_model(timeseries, I, num, tlen, nrunmax, Gaussian_version = True,\
-                                                                    Mutual_version = True, model = None)
+            Sigma_null, T_null, Tn_null = null_model(timeseries, triplet, n_intervals, time_window, n_max_run, gaussian = True, mutual = True, model = None)
             
             return T, T_null
     
@@ -552,7 +550,7 @@ def t(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, n
             raise TypeError("Only integers or False accepted")
     
 
-def tn(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, nrunmax: int = 5000):
+def tn_measure(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int, null: bool = True, n_max_run: int = 5000):
     """
     Computes the maximum difference between consecutive mutual information values in a time series.
     This is defined as the Tn measure.
@@ -564,19 +562,19 @@ def tn(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, 
     Args:
         timeseries (np.ndarray): 
             A 2D NumPy array representing the time series data (shape: n_series, time_steps).
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows used in the analysis:
-            - `I[0]`: row for X (input variable)
-            - `I[1]`: row for Y (target variable)
-            - `I[2]`: row used to sort and divide data into intervals.
-        num (int): 
+            - `triplet[0]`: row for X (input variable)
+            - `triplet[1]`: row for Y (target variable)
+            - `triplet[2]`: row used to sort and divide data into intervals.
+        n_intervals (int): 
             Number of intervals to divide the time series for localized mutual information analysis.
-        tlen (int): 
+        time_window (int): 
             The length of the time window to consider for analysis (i.e., the number of time steps).
         null (bool or int, optional): 
             If False, the function only computes the maximum difference (`Tn`). 
             If an integer, simulates a null model with the specified number of runs. Defaults to True.
-        nrunmax (int, optional): 
+        n_max_run (int, optional): 
             Maximum number of runs for the null model simulation. Default is 5000.
 
     Returns:
@@ -590,30 +588,29 @@ def tn(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, 
         TypeError: If `null` is not False or an integer.
     """
 
-    timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/num))
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
+    timeseries = timeseries[:,-time_window:]
+    dtlen = int(np.floor(time_window/n_intervals))
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
     idx = Z.argsort()
     X_sort = X[idx]
     Y_sort = Y[idx]
     Xn = np.zeros((dtlen,2))
-    MIz = np.zeros((num))
+    MIz = np.zeros((n_intervals))
     
-    for i in range(num):
+    for i in range(n_intervals):
         Xn[:,0] = X_sort[i*dtlen:(i+1)*dtlen]
         y = Y_sort[i*dtlen:(i+1)*dtlen]
         mi = mutual_info_regression(Xn, y, discrete_features = False)
         MIz[i] = mi[0]
 
-    Tn = np.max(abs(MIz[0:num-1]-MIz[1:num]))
-    if null == False:
+    Tn = np.max(abs(MIz[0:n_intervals-1]-MIz[1:n_intervals]))
+    if not null:
         return Tn
     else:
         if isinstance(null, int):
-            Sigma_null, T_null, Tn_null = null_model(timeseries, I, num, tlen, nrunmax, Gaussian_version = True,\
-                                                                    Mutual_version = True, model = None)
+            Sigma_null, T_null, Tn_null = null_model(timeseries, triplet, n_intervals, time_window, n_max_run, gaussian = True, mutual = True, model = None)
             
             return Tn, Tn_null
     
@@ -621,7 +618,7 @@ def tn(timeseries: np.ndarray, I: list, num: int, tlen: int, null: bool = True, 
             raise TypeError("Only integers or False accepted")
     
 
-def correlation_analysis_continuous(timeseries: np.ndarray, I: list, num: int, tlen: int):
+def correlation_analysis_continuous(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int):
     """
     Analyzes the correlation between continuous variables in a time series.
 
@@ -632,14 +629,14 @@ def correlation_analysis_continuous(timeseries: np.ndarray, I: list, num: int, t
     Args:
         timeseries (np.ndarray): 
             A 2D NumPy array representing the time series data (shape: n_series, time_steps).
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows used in the analysis:
-            - `I[0]`: row for X (first variable)
-            - `I[1]`: row for Y (second variable)
-            - `I[2]`: row used to sort and divide data into intervals.
-        num (int): 
+            - `triplet[0]`: row for X (first variable)
+            - `triplet[1]`: row for Y (second variable)
+            - `triplet[2]`: row used to sort and divide data into intervals.
+        n_intervals (int): 
             Number of intervals to divide the time series for localized correlation analysis.
-        tlen (int): 
+        time_window (int): 
             The length of the time window to consider for analysis (i.e., the number of time steps).
 
     Returns:
@@ -652,18 +649,18 @@ def correlation_analysis_continuous(timeseries: np.ndarray, I: list, num: int, t
             - `Tn` (float): The maximum difference between consecutive correlation values.
     """
 
-    timeseries = timeseries[:,-tlen:]
-    dtlen = int(np.floor(tlen/num))
-    X = np.asarray(timeseries[I[0],:])
-    Y = np.asarray(timeseries[I[1],:])
-    Z = np.asarray(timeseries[I[2],:])
+    timeseries = timeseries[:,-time_window:]
+    dtlen = int(np.floor(time_window/n_intervals))
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
     idx = Z.argsort()
     X_sort = X[idx]
     Y_sort = Y[idx]
-    Cz = np.zeros((num))
+    Cz = np.zeros((n_intervals))
     Xaus = np.zeros((dtlen,2))
     
-    for i in range(num):
+    for i in range(n_intervals):
         Xaus[:,0] = X_sort[i*dtlen:(i+1)*dtlen]
         Xaus[:,1] = Y_sort[i*dtlen:(i+1)*dtlen]
         C = np.cov(Xaus)
@@ -672,14 +669,12 @@ def correlation_analysis_continuous(timeseries: np.ndarray, I: list, num: int, t
     C = np.mean(Cz)
     Sigma = np.var(Cz)
     T = np.max(Cz)-np.min(Cz)
-    Tn = np.max(abs(Cz[0:num-1]-Cz[1:num]))
+    Tn = np.max(abs(Cz[0:n_intervals-1]-Cz[1:n_intervals]))
     
     return C, Cz, Sigma, T, Tn
 
 
-def null_model_results(M: np.ndarray, Cov: np.ndarray, timeseries: np.ndarray, I: list, num: int, tlen: int, 
-                       Sigma: float, T: float, Tn: float, nrunmax: int, Gaussian_version: bool, 
-                       Mutual_version: bool, model: int = None):
+def null_model_results(M: np.ndarray, Cov: np.ndarray, timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int, Sigma: float, T: float, Tn: float, n_max_run: int, gaussian: bool, mutual: bool, model: int = None):
     """
     Computes the results of the null model for mutual conditional information.
 
@@ -694,14 +689,14 @@ def null_model_results(M: np.ndarray, Cov: np.ndarray, timeseries: np.ndarray, I
             Covariance matrix for the multivariate normal distribution.
         timeseries (np.ndarray): 
             A 2D NumPy array representing the time series data (shape: n_series, time_steps).
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows used in the analysis:
-            - `I[0]`: row for X (first variable)
-            - `I[1]`: row for Y (second variable)
-            - `I[2]`: row used to sort and divide data into intervals.
-        num (int): 
+            - `triplet[0]`: row for X (first variable)
+            - `triplet[1]`: row for Y (second variable)
+            - `triplet[2]`: row used to sort and divide data into intervals.
+        n_intervals (int): 
             Number of intervals to divide the time series for localized analysis.
-        tlen (int): 
+        time_window (int): 
             The length of the time window to consider for analysis.
         Sigma (float): 
             Standard deviation of mutual information (or correlation) in the original data.
@@ -709,11 +704,11 @@ def null_model_results(M: np.ndarray, Cov: np.ndarray, timeseries: np.ndarray, I
             Range of mutual information (or correlation) values in the original data.
         Tn (float): 
             Maximum difference between consecutive mutual information (or correlation) values in the original data.
-        nrunmax (int): 
+        n_max_run (int): 
             Maximum number of runs for the null model simulation.
-        Gaussian_version (bool): 
+        gaussian (bool): 
             If True, uses a multivariate normal distribution for the null model.
-        Mutual_version (bool): 
+        mutual (bool): 
             If True, performs mutual information analysis; otherwise, performs correlation analysis.
         model (int, optional): 
             Null model type (0-7). Defaults to None. Determines the specific model for the null simulation.
@@ -747,11 +742,11 @@ def null_model_results(M: np.ndarray, Cov: np.ndarray, timeseries: np.ndarray, I
             - Z Y X Z: 7
     """
 
-    I2 = I
-    if (Gaussian_version==True):
-        MT = M[I]
-        CovT = Cov[I]
-        CovT = CovT[:,I]
+    I2 = triplet
+    if gaussian:
+        MT = M[triplet]
+        CovT = Cov[triplet]
+        CovT = CovT[:,triplet]
         if model == 1:
             Cov[1,2] = 0
             Cov[2,1] = Cov[1,2]
@@ -790,20 +785,18 @@ def null_model_results(M: np.ndarray, Cov: np.ndarray, timeseries: np.ndarray, I
     T_null_list = []
     Tn_null_list = []
     
-    for n in range(nrunmax):
-        if(Gaussian_version==False): 
+    for n in range(n_max_run):
+        if not gaussian: 
             null_timeseries = np.array(timeseries).copy()
             np.random.shuffle(null_timeseries[I2[2], :])
-            
-        elif(Gaussian_version==True):    
-            null_timeseries = mult_dist.rvs(tlen)
+        else:
+            null_timeseries = mult_dist.rvs(time_window)
             null_timeseries = np.transpose(null_timeseries)
             
-        if(Mutual_version==False):
-            X_null, Xz_null, Sigma_null, T_null, Tn_null = correlation_analysis_continuous(null_timeseries, I2, num, tlen)
-            
-        elif(Mutual_version==True):
-            X_null, Xz_null, MIC_null, Sigma_null, T_null, Tn_null = mutual_information_analysis_continuous(null_timeseries, I2, num, tlen)
+        if not mutual:
+            X_null, Xz_null, Sigma_null, T_null, Tn_null = correlation_analysis_continuous(null_timeseries, I2, n_intervals, time_window)
+        else:
+            X_null, Xz_null, MIC_null, Sigma_null, T_null, Tn_null = mutual_information_analysis_continuous(null_timeseries, I2, n_intervals, time_window)
             
         Sigma_null_list.append(Sigma_null)
         T_null_list.append(T_null)
@@ -821,12 +814,12 @@ def null_model_results(M: np.ndarray, Cov: np.ndarray, timeseries: np.ndarray, I
     Theta = abs(Sigma-Sigma_mean_null)/(Sigma_null)
     Theta_T = abs(T-T_mean_null)/T_std_null
     Theta_Tn = abs(Tn-Tn_mean_null)/Tn_std_null
-    P = np.count_nonzero(Sigma_null_list[Sigma_null_list>Sigma])/nrunmax
-    P = P if P>0 else 1/nrunmax
-    P_T = np.count_nonzero(T_null_list[T_null_list>T])/nrunmax
-    P_T = P_T if P_T>0 else 1/nrunmax
-    P_Tn = np.count_nonzero(Tn_null_list[Tn_null_list>Tn])/nrunmax
-    P_Tn = P_Tn if P_Tn>0 else 1/nrunmax
+    P = np.count_nonzero(Sigma_null_list[Sigma_null_list>Sigma])/n_max_run
+    P = P if P>0 else 1/n_max_run
+    P_T = np.count_nonzero(T_null_list[T_null_list>T])/n_max_run
+    P_T = P_T if P_T>0 else 1/n_max_run
+    P_Tn = np.count_nonzero(Tn_null_list[Tn_null_list>Tn])/n_max_run
+    P_Tn = P_Tn if P_Tn>0 else 1/n_max_run
     
     print('Sigma, T, Tn',Sigma, T, Tn)
     print('Sigma_mean_null', Sigma_mean_null)
@@ -837,8 +830,7 @@ def null_model_results(M: np.ndarray, Cov: np.ndarray, timeseries: np.ndarray, I
     return  X_null, Xz_null, Theta, Theta_T, Theta_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn
 
 
-def null_model(timeseries: np.ndarray, I: list, num: int, tlen: int, nrunmax: int, Gaussian_version: bool, 
-               Mutual_version: bool, model: int = None):
+def null_model(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int, n_max_run: int, gaussian: bool, mutual: bool, model: int = None):
     """
     Compute the null model for mutual conditional information using Gaussian distribution or shuffled data.
 
@@ -850,20 +842,20 @@ def null_model(timeseries: np.ndarray, I: list, num: int, tlen: int, nrunmax: in
     Args:
         timeseries (np.ndarray): 
             A 2D array representing the time series data (shape: n_series, time_steps).
-        I (list): 
+        triplet (list): 
             A list of three integers specifying the indices of rows in the time series that are of interest:
-            - `I[0]`: row for X (first variable)
-            - `I[1]`: row for Y (second variable)
-            - `I[2]`: row used to sort and divide data into intervals.
-        num (int): 
+            - `triplet[0]`: row for X (first variable)
+            - `triplet[1]`: row for Y (second variable)
+            - `triplet[2]`: row used to sort and divide data into intervals.
+        n_intervals (int): 
             Number of intervals for analysis.
-        tlen (int): 
+        time_window (int): 
             Length of the time window to consider for analysis.
-        nrunmax (int): 
+        n_max_run (int): 
             Maximum number of runs for the null model simulation.
-        Gaussian_version (bool): 
+        gaussian (bool): 
             If True, uses a multivariate normal distribution as a null model; otherwise, uses shuffled data.
-        Mutual_version (bool): 
+        mutual (bool): 
             If True, performs mutual information analysis; otherwise, performs correlation analysis.
         model (int, optional): 
             Null model type (0-7). Defaults to None. Determines the specific model for the null simulation.
@@ -890,15 +882,15 @@ def null_model(timeseries: np.ndarray, I: list, num: int, tlen: int, nrunmax: in
             - Z Y X Z: 7
     """
 
-    I = np.array(I)-1
-    timeseries = timeseries[:, -tlen:]
+    triplet = np.array(triplet)-1
+    timeseries = timeseries[:, -time_window:]
     Cov = np.cov(timeseries)
     M = np.mean(timeseries, axis = 1)
-    I2 = I
-    if (Gaussian_version==True):
-        MT = M[I]
-        CovT = Cov[I]
-        CovT = CovT[:,I]
+    I2 = triplet
+    if gaussian:
+        MT = M[triplet]
+        CovT = Cov[triplet]
+        CovT = CovT[:,triplet]
         if model == 1:
             Cov[1,2] = 0
             Cov[2,1] = Cov[1,2]
@@ -937,20 +929,18 @@ def null_model(timeseries: np.ndarray, I: list, num: int, tlen: int, nrunmax: in
     T_null_list = []
     Tn_null_list = []
     
-    for n in range(nrunmax):
-        if(Gaussian_version==False): 
+    for n in range(n_max_run):
+        if not gaussian: 
             null_timeseries = np.array(timeseries).copy()
             np.random.shuffle(null_timeseries[I2[2], :])
-            
-        elif(Gaussian_version==True):    
-            null_timeseries = mult_dist.rvs(tlen)
+        else:    
+            null_timeseries = mult_dist.rvs(time_window)
             null_timeseries = np.transpose(null_timeseries)
             
-        if(Mutual_version==False):
-            X_null, Xz_null, Sigma_null, T_null, Tn_null = correlation_analysis_continuous(null_timeseries, I2, num, tlen)
-            
-        elif(Mutual_version==True):
-            X_null, Xz_null, MIC_null, Sigma_null, T_null, Tn_null = mutual_information_analysis_continuous(null_timeseries, I2, num, tlen)
+        if not mutual:
+            X_null, Xz_null, Sigma_null, T_null, Tn_null = correlation_analysis_continuous(null_timeseries, I2, n_intervals, time_window)
+        else:
+            X_null, Xz_null, MIC_null, Sigma_null, T_null, Tn_null = mutual_information_analysis_continuous(null_timeseries, I2, n_intervals, time_window)
             
         Sigma_null_list.append(Sigma_null)
         T_null_list.append(T_null)
@@ -966,8 +956,7 @@ def null_model(timeseries: np.ndarray, I: list, num: int, tlen: int, nrunmax: in
     return Sigma_mean_null, T_mean_null, Tn_mean_null
 
 
-def Theta_score_null_model(timeseries: np.ndarray, I: list, num: int, tlen: int, nrunmax: int, 
-                           Gaussian_version: bool = True, Mutual_version: bool = True, extended: bool = False):
+def Theta_score_null_model(timeseries: np.ndarray, triplet: list, n_intervals: int, time_window: int, n_max_run: int, gaussian: bool = True, mutual: bool = True, extended: bool = False):
     """
     Calculate Theta scores and statistical significance from null model simulations for mutual conditional information.
 
@@ -980,20 +969,20 @@ def Theta_score_null_model(timeseries: np.ndarray, I: list, num: int, tlen: int,
     Args:
         timeseries (np.ndarray): 
             A 2D array representing the time series data (shape: n_series, time_steps).
-        I (list): 
+        triplet (list): 
             A list of indices for rows in the time series that are of interest:
-            - `I[0]`: row for X (first variable)
-            - `I[1]`: row for Y (second variable)
-            - `I[2]`: row used to sort and divide data into intervals.
-        num (int): 
+            - `triplet[0]`: row for X (first variable)
+            - `triplet[1]`: row for Y (second variable)
+            - `triplet[2]`: row used to sort and divide data into intervals.
+        n_intervals (int): 
             Number of intervals for analysis.
-        tlen (int): 
+        time_window (int): 
             Length of the time window to consider for analysis.
-        nrunmax (int): 
+        n_max_run (int): 
             Maximum number of runs for the null model simulation.
-        Gaussian_version (bool, optional): 
+        gaussian (bool, optional): 
             If True, uses a multivariate normal distribution as a null model; otherwise, uses shuffled data. Defaults to True.
-        Mutual_version (bool, optional): 
+        mutual (bool, optional): 
             If True, performs mutual information analysis; otherwise, performs correlation analysis. Defaults to True.
         extended (bool, optional): 
             If True, performs extended mutual information analysis; otherwise, performs standard mutual information analysis. Defaults to False.
@@ -1022,78 +1011,25 @@ def Theta_score_null_model(timeseries: np.ndarray, I: list, num: int, tlen: int,
 
     Notes:
         - This function allows for analysis using either standard or extended mutual information methods. 
-        - The null model is computed using either a Gaussian distribution (if `Gaussian_version=True`) or shuffled data (if `Gaussian_version=False`).
+        - The null model is computed using either a Gaussian distribution (if `gaussian=True`) or shuffled data (if `gaussian=False`).
         - The `Theta` score compares the original data's properties (standard deviation, range, and maximum consecutive differences) to those of the null model, with statistical significance assessed via p-values.
     """
 
-    I = np.array(I)-1
-    timeseries = timeseries[:, -tlen:]
+    triplet = np.array(triplet)-1
+    timeseries = timeseries[:, -time_window:]
     Cov = np.cov(timeseries)
     M = np.mean(timeseries, axis = 1)
     MIC = -1
 
-    if (Mutual_version == True):
-        if extended == False:
-            X, Xz, MIC, Sigma, T, Tn = mutual_information_analysis_continuous(timeseries, I, num, tlen)
+    if mutual:
+        if not extended:
+            X, Xz, MIC, Sigma, T, Tn = mutual_information_analysis_continuous(timeseries, triplet, n_intervals, time_window)
         else: 
-            X, Xz, MIC, Corr_Sigma, Sigma, T, Tn, MINDY, MI1, MI2 = mutual_information_analysis_continuous_extended(timeseries, I, num, tlen)
-    elif (Mutual_version == False):
-        X, Xz, Sigma, T, Tn = correlation_analysis_continuous(timeseries, I, num, tlen)
-    X_null, Xz_null, Theta, Theta_T, Theta_Tn, Sigma, Sigma_null_list, P,P_T,P_Tn = null_model_results(M, Cov, timeseries, I, \
-                                                                                                       num, tlen, Sigma, T, Tn, nrunmax, \
-                                                                                                       Gaussian_version, Mutual_version)
-    if extended == False: 
+            X, Xz, MIC, Corr_Sigma, Sigma, T, Tn, MINDY, MI1, MI2 = mutual_information_analysis_continuous_extended(timeseries, triplet, n_intervals, time_window)
+    else:
+        X, Xz, Sigma, T, Tn = correlation_analysis_continuous(timeseries, triplet, n_intervals, time_window)
+    X_null, Xz_null, Theta, Theta_T, Theta_Tn, Sigma, Sigma_null_list, P,P_T,P_Tn = null_model_results(M, Cov, timeseries, triplet, n_intervals, time_window, Sigma, T, Tn, n_max_run, gaussian, mutual)
+    if not extended: 
         return X, Xz, Xz_null, MIC, Theta, Theta_T, Theta_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn
-    
     else:
         return X, Xz, Xz_null, MIC, Theta, Theta_T, Theta_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn, MINDY, MI1, MI2, Corr_Sigma
-
-
-def freedman_diaconis(data: np.ndarray, returnas: str = "bins"):
-    """
-    Compute the optimal bin width for a histogram using the Freedman-Diaconis rule.
-
-    This function calculates the optimal number of bins or the bin width for a histogram 
-    based on the Freedman-Diaconis rule, which takes into account the interquartile range 
-    (IQR) of the data and the number of data points.
-
-    The formula for the bin width is:
-        bin width = (2 * IQR) / N^(1/3)
-    where IQR is the interquartile range, and N is the number of data points.
-
-    Args:
-        data (np.ndarray): 
-            Input data for which the bin width or number of bins is computed. 
-            It should be a 1D numpy array or a sequence of numerical values.
-        returnas (str, optional): 
-            If "bins", returns the number of bins for the histogram. If "width", returns the bin width. Defaults to "bins".
-
-    Returns:
-        result (int or float): 
-            The computed result based on the specified `returnas` parameter:
-            - If `returnas="bins"`, returns the estimated number of bins for a histogram.
-            - If `returnas="width"`, returns the optimal bin width for a histogram.
-
-    Raises:
-        ValueError: 
-            If `returnas` is not one of ["bins", "width"].
-
-    Notes:
-        - The Freedman-Diaconis rule is often used for determining the optimal bin width in histograms.
-        - This method is robust to outliers due to the use of the interquartile range (IQR).
-    """
-
-    data = np.asarray(data, dtype = np.float_)
-    IQR  = sp.stats.iqr(data, rng = (25, 75), scale="raw", nan_policy = "omit")
-    N    = data.size
-    bw   = (2*IQR)/np.power(N, 1/3)
-
-    if returnas=="bins":
-        datmin, datmax = data.min(), data.max()
-        datrng = datmax - datmin
-        result = int(np.round(datrng / bw) + 1)
-        
-    else:
-        result = bw
-        
-    return(result)

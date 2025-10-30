@@ -2,39 +2,39 @@ import numpy as np
 import trim.infocore as ifc
 from trim.analysis import decision_tree
 
-def entropy(timeseries: np.ndarray, I: list):
+def entropy(timeseries: np.ndarray, triplet: list):
     """
     Calculates the entropy for a given triple based on mutual information and quantile-based discretization.
 
     Args:
         timeseries (np.ndarray): The time series data of the network.
-        I (list): The chosen triple of indices.
+        triplet (list): The chosen triple of indices.
 
     Returns:
         float: The calculated entropy value (S).
     """
     # Assign values based on indices from the triple
-    X = timeseries[I[0]-1,:]
-    Y = timeseries[I[1]-1,:]
-    Z = timeseries[I[2]-1,:]
+    X = timeseries[triplet[0]-1,:]
+    Y = timeseries[triplet[1]-1,:]
+    Z = timeseries[triplet[2]-1,:]
 
     # Constants for calculations
-    num = 5
+    n_intervals = 5
     tlen = len(timeseries[0])
     nrunmax = 100
     P_sep = 10
 
     # Calculate the mutual information and related values
     MI, MIz, MIz_null, MIC, Theta_S, Theta2_T, Theta2_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn = ifc.Theta_score_null_model(
-        timeseries, I, num, tlen, nrunmax, True, True)
+        timeseries, triplet, n_intervals, tlen, nrunmax, True, True)
 
     # Decision tree to determine thresholds
-    x = range(1, num + 1)
+    x = range(1, n_intervals + 1)
     th1, th2, c = decision_tree(x, MIz, disp_fig=False, disp_txt_rep=False, disp_tree=False)
 
-    # Adjust indices and calculate quantiles
-    I = np.array(I) - 1
-    X, Y, Z = ifc.timeseries_quantile(timeseries, I, num, tlen)
+    # Adjust triplet and calculate quantiles
+    triplet = np.array(triplet) - 1
+    X, Y, Z = ifc.timeseries_quantile(timeseries, triplet, n_intervals, tlen)
 
     # Function to calculate entropy for a given subset of data
     def calculate_entropy(X_data: np.ndarray, Y_data: np.ndarray) -> float:

@@ -39,12 +39,12 @@ B = create_node_edge_incidence_matrix(edge_list)
 # than the length of the timeseries from data
 # function that calculates MI Sigma MIz and MIC (conditional MI) 
 # from  mutual information calculated for continuous variables
-def mutual_information_analysis_continuous(timeseries,triplets,num,tlen):
+def mutual_information_analysis_continuous(timeseries,triplet,num,tlen):
     timeseries = timeseries[:,-tlen:]
     dtlen=int(np.floor(tlen/num))
-    X = np.asarray(timeseries[triplets[0],:])
-    Y = np.asarray(timeseries[triplets[1],:])
-    Z = np.asarray(timeseries[triplets[2],:])
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
     Xa = np.zeros((tlen,2))
     Xa[:,0] = X
     MI = mutual_info_regression(Xa, Y, discrete_features=False)
@@ -72,12 +72,12 @@ def mutual_information_analysis_continuous(timeseries,triplets,num,tlen):
 # num number of bins
 # function that calculates MI Sigma MIz and MIC (conditional MI) 
 # from  mutual information calculated for continuous variables
-def correlation_analysis_continuous(timeseries,triplets,num,tlen):
+def correlation_analysis_continuous(timeseries,triplet,num,tlen):
     timeseries = timeseries[:,-tlen:]
     dtlen = int(np.floor(tlen/num))
-    X = np.asarray(timeseries[triplets[0],:])
-    Y = np.asarray(timeseries[triplets[1],:])
-    Z = np.asarray(timeseries[triplets[2],:])
+    X = np.asarray(timeseries[triplet[0],:])
+    Y = np.asarray(timeseries[triplet[1],:])
+    Z = np.asarray(timeseries[triplet[2],:])
     idx = Z.argsort()
     X_sort = X[idx]
     Y_sort = Y[idx]
@@ -95,12 +95,12 @@ def correlation_analysis_continuous(timeseries,triplets,num,tlen):
     return C, Cz,Sigma, T, Tn
 
 #function that calculates the  Theta variable (normalized z-score)
-def null_model_results(M, Cov, timeseries,triplets, num, Sigma, T, Tn, nrunmax, Gaussian_version, Mutual_version):
-    I2 = triplets
+def null_model_results(M, Cov, timeseries,triplet, num, Sigma, T, Tn, nrunmax, Gaussian_version, Mutual_version):
+    I2 = triplet
     if Gaussian_version:
-        MT = M[triplets]
-        CovT = Cov[triplets]
-        CovT = CovT[:,triplets]
+        MT = M[triplet]
+        CovT = Cov[triplet]
+        CovT = CovT[:,triplet]
         mult_dist = sp.stats.multivariate_normal(mean = MT, cov = CovT)
         I2 = [0,1,2]
       
@@ -145,25 +145,25 @@ def null_model_results(M, Cov, timeseries,triplets, num, Sigma, T, Tn, nrunmax, 
 
 
 # main function that given a timeseries between N variables, selects the three time series in the triple of nodes
-# triplets (in the original labelling of the edge list) and calculates the MI, the
+# indices (in the original labelling of the edge list) and calculates the MI, the
 # the conditional mutual information MIC, Sigma and Theta (with a null model taking nrunmax iterations)
 # tlen length of the times series to be analysed (multiple of num) should be smaller or equal
 # than the length of the timeseries from data
 # num number of bins
 # version 1: gaussian model from covariance and mean of the three timeseries
 # version 2: reshuffling of the Z timeseries
-def Theta_score_null_model(timeseries, triplets, num, tlen, nrunmax, Gaussian_version=True, Mutual_version=True):
-    triplets = np.array(triplets)-1
+def Theta_score_null_model(timeseries, triplet, num, tlen, nrunmax, Gaussian_version=True, Mutual_version=True):
+    triplet = np.array(triplet)-1
     timeseries = timeseries[:, -tlen:]
     Cov = np.cov(timeseries)
     M = np.mean(timeseries, axis=1)
     MIC = -1
 
     if Mutual_version:
-        X, Xz, MIC, Sigma, T, Tn = mutual_information_analysis_continuous(timeseries, triplets, num, tlen)
+        X, Xz, MIC, Sigma, T, Tn = mutual_information_analysis_continuous(timeseries, triplet, num, tlen)
     else:
-        X, Xz, Sigma, T, Tn = correlation_analysis_continuous(timeseries, triplets, num, tlen)
-    X_null, Xz_null, Theta, Theta_T, Theta_Tn, Sigma, Sigma_null_list, P,P_T,P_Tn = null_model_results(M, Cov, timeseries, triplets, num, Sigma, T, Tn, nrunmax, Gaussian_version, Mutual_version)
+        X, Xz, Sigma, T, Tn = correlation_analysis_continuous(timeseries, triplet, num, tlen)
+    X_null, Xz_null, Theta, Theta_T, Theta_Tn, Sigma, Sigma_null_list, P,P_T,P_Tn = null_model_results(M, Cov, timeseries, triplet, num, Sigma, T, Tn, nrunmax, Gaussian_version, Mutual_version)
 
     return X, Xz, Xz_null, MIC, Theta, Theta_T, Theta_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn
 
@@ -188,18 +188,18 @@ j = 0
 for l in x1:
     j=j+1
     if 0 ==0:    
-        triplets = [l[0],l[1],i] # triple without triadic interaction,but with a link between X and Y, 10 bins
-        if triplets[0]!=triplets[2] and triplets[1]!=triplets[2]:
+        triplet = [l[0],l[1],i] # triple without triadic interaction,but with a link between X and Y, 10 bins
+        if triplet[0]!=triplet[2] and triplet[1]!=triplet[2]:
             tlen, num, nrunmax = 7000, round(tlen/100), 10
             #tlen used to be 7000
         
-            X, Xz2, Xz_null2, MIC, Theta2, Theta2_T, Theta2_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn = Theta_score_null_model(timeseries, triplets, num, tlen, nrunmax, False, True)
+            X, Xz2, Xz_null2, MIC, Theta2, Theta2_T, Theta2_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn = Theta_score_null_model(timeseries, triplet, num, tlen, nrunmax, False, True)
             if P == 0.1:
                 nrunmax=100
-                X, Xz2, Xz_null2, MIC, Theta2, Theta2_T, Theta2_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn = Theta_score_null_model(timeseries, triplets, num, tlen, nrunmax, False, True)
+                X, Xz2, Xz_null2, MIC, Theta2, Theta2_T, Theta2_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn = Theta_score_null_model(timeseries, triplet, num, tlen, nrunmax, False, True)
                 if P == 0.01:
                     nrunmax=1000
-                    X, Xz2, Xz_null2, MIC, Theta2, Theta2_T, Theta2_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn = Theta_score_null_model(timeseries, triplets, num, tlen, nrunmax, False, True)
+                    X, Xz2, Xz_null2, MIC, Theta2, Theta2_T, Theta2_Tn, Sigma, Sigma_null_list, P, P_T, P_Tn = Theta_score_null_model(timeseries, triplet, num, tlen, nrunmax, False, True)
             str2='output_ran_'+str(l[0])+'-'+str(l[1])+'_'+str(i)+'.txt'
             with open(str2, "a") as f:
                 print(l,i,Theta2, Theta2_T, Theta2_Tn, P, P_T, P_Tn,X,MIC,Sigma,end='\n', file=f)
